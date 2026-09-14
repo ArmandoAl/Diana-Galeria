@@ -1,0 +1,98 @@
+[
+  {
+    "id": "obra-01",
+    "slotIndex": 0,
+    "title": "Obra 1 — título por confirmar",
+    "artist": "Autoría por confirmar",
+    "year": "Por confirmar",
+    "technique": "Por confirmar",
+    "dimensions": "Por confirmar",
+    "description": "Ficha provisional de la primera obra. Sustituir por el texto curatorial aprobado antes de publicar.",
+    "imagePath": "/artworks/1.jpeg",
+    "isSpecial": false
+  },
+  {
+    "id": "obra-02",
+    "slotIndex": 1,
+    "title": "Obra 2 — título por confirmar",
+    "artist": "Autoría por confirmar",
+    "year": "Por confirmar",
+    "technique": "Por confirmar",
+    "dimensions": "Por confirmar",
+    "description": "Ficha provisional de la segunda obra. Sustituir por el texto curatorial aprobado antes de publicar.",
+    "imagePath": "/artworks/2.jpeg",
+    "isSpecial": false
+  },
+  {
+    "id": "obra-03",
+    "slotIndex": 2,
+    "title": "Obra 3 — título por confirmar",
+    "artist": "Autoría por confirmar",
+    "year": "Por confirmar",
+    "technique": "Por confirmar",
+    "dimensions": "Por confirmar",
+    "description": "Ficha provisional de la tercera obra. Sustituir por el texto curatorial aprobado antes de publicar.",
+    "imagePath": "/artworks/3.jpeg",
+    "isSpecial": false
+  },
+  {
+    "id": "obra-04",
+    "slotIndex": 3,
+    "title": "Obra 4 — título por confirmar",
+    "artist": "Autoría por confirmar",
+    "year": "Por confirmar",
+    "technique": "Por confirmar",
+    "dimensions": "Por confirmar",
+    "description": "Ficha provisional de la cuarta obra. Sustituir por el texto curatorial aprobado antes de publicar.",
+    "imagePath": "/artworks/4.jpeg",
+    "isSpecial": false
+  },
+  {
+    "id": "obra-05",
+    "slotIndex": 4,
+    "title": "Obra 5 — título por confirmar",
+    "artist": "Autoría por confirmar",
+    "year": "Por confirmar",
+    "technique": "Por confirmar",
+    "dimensions": "Por confirmar",
+    "description": "Ficha provisional de la quinta obra. Sustituir por el texto curatorial aprobado antes de publicar.",
+    "imagePath": "/artworks/5.jpeg",
+    "isSpecial": false
+  },
+  {
+    "id": "obra-06",
+    "slotIndex": 5,
+    "title": "Obra 6 — título por confirmar",
+    "artist": "Autoría por confirmar",
+    "year": "Por confirmar",
+    "technique": "Por confirmar",
+    "dimensions": "Por confirmar",
+    "description": "Ficha provisional de la sexta obra. Sustituir por el texto curatorial aprobado antes de publicar.",
+    "imagePath": "/artworks/6.jpeg",
+    "isSpecial": false
+  },
+  {
+    "id": "obra-07",
+    "slotIndex": 6,
+    "title": "Mi lugar favorito eres tú",
+    "artist": "Dedicatoria personal; autoría de la imagen por confirmar",
+    "year": "Sin fecha",
+    "technique": "Imagen digital con dedicatoria",
+    "dimensions": "Por confirmar",
+    "description": "Para ti, mi amor: quise dedicarte un lugar en esta galería porque haces más hermoso mi mundo. Entre todas las cosas que podría admirar, elijo la alegría de compartir la vida contigo. Esta sala es una pequeña forma de decirte cuánto te quiero, y esta obra, una invitación a seguir creando nuestra historia juntos.",
+    "imagePath": "/artworks/7.jpeg",
+    "isSpecial": true
+  },
+  {
+    "id": "obra-08",
+    "slotIndex": 7,
+    "title": "Obra 8 — título por confirmar",
+    "artist": "Autoría por confirmar",
+    "year": "Por confirmar",
+    "technique": "Por confirmar",
+    "dimensions": "Por confirmar",
+    "description": "Ficha provisional de la octava obra. Sustituir por el texto curatorial aprobado antes de publicar.",
+    "imagePath": "/artworks/8.jpeg",
+    "isSpecial": false
+  }
+]

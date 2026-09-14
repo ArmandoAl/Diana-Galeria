@@ -1,0 +1,8 @@
+:root { font-family: system-ui, sans-serif; color: #f3eee3; background: #101a16; color-scheme: dark; font-synthesis: none; }
+* { box-sizing: border-box; }
+body { margin: 0; }
+button { font: inherit; cursor: pointer; color: inherit; background: #23392f; border: 1px solid #9f8958; border-radius: 4px; padding: .7rem 1rem; }
+button:disabled { opacity: .5; cursor: wait; }
+button:focus-visible { outline: 3px solid #f5d580; outline-offset: 4px; }
+[hidden] { display: none !important; }
+h1, h2 { font-family: Georgia, serif; font-weight: 400; }

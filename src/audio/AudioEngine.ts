@@ -181,7 +181,6 @@ export class AudioEngine {
   /** Actualiza únicamente la capa ambiental; los pasos se disparan por distancia en PlayerRig. */
   update() {
     if (this.disposed) return
-    const now = this.context.currentTime
     if (!this.active || !this.unlocked || !this.ready || this.context.state !== 'running') {
       this.stopSteps()
       return
@@ -194,7 +193,6 @@ export class AudioEngine {
     const t = Math.max(0, Math.min(1, 8 - distance))
     this.song.setVolume(this.hasSong ? this.config.ambientVolume * t * t * (3 - 2 * t) : 0)
     if (this.hasSong && !this.song.isPlaying) this.song.play()
-
   }
 
   private stopSteps() {

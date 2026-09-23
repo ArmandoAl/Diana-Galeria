@@ -68,8 +68,8 @@ export function CuratorOverlay({
   }, [artwork, inspecting])
 
   const handleEnterClick = useCallback(() => {
+    useGalleryStore.getState().setIsExploring(true)
     if (isTouch) {
-      useGalleryStore.getState().setIsExploring(true)
       const hasSeen = localStorage.getItem('munal_touch_tutorial_seen')
       if (!hasSeen) {
         setShowTutorial(true)
@@ -83,6 +83,26 @@ export function CuratorOverlay({
       }
     }
   }, [isTouch])
+
+  const handleCloseArtwork = useCallback(() => {
+    close()
+    if (!isTouch) {
+      const canvasEl = document.querySelector('canvas')
+      try {
+        canvasEl?.requestPointerLock()
+      } catch {
+        // Fallback natural: el usuario reanuda haciendo clic sobre el canvas
+      }
+    }
+  }, [close, isTouch])
+
+  const handleExitToMenu = useCallback(() => {
+    close()
+    useGalleryStore.getState().setIsExploring(false)
+    if (document.pointerLockElement) {
+      document.exitPointerLock?.()
+    }
+  }, [close])
 
   const isTourActive = locked || isExploring
 
@@ -346,11 +366,10 @@ export function CuratorOverlay({
         ref={dialog}
         className={`${styles.dialog} ${special ? styles.loveLetter : ''}`}
         aria-labelledby="artwork-title"
-        onCancel={close}
+        onCancel={handleCloseArtwork}
         onClose={() => {
           if (dialog.current?.open) return
-          close()
-          enter.current?.focus({ preventScroll: true })
+          handleCloseArtwork()
         }}
       >
         {artwork && (
@@ -362,10 +381,24 @@ export function CuratorOverlay({
               <button
                 type="button"
                 className={styles.closeButton}
-                aria-label="Cerrar ficha"
-                onClick={close}
+                aria-label="Cerrar y volver al menú"
+                title="Volver al menú"
+                onClick={handleExitToMenu}
               >
-                ×
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                >
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
               </button>
             </div>
             <img
@@ -406,7 +439,7 @@ export function CuratorOverlay({
                 <button
                   type="button"
                   className={styles.goldButton}
-                  onClick={close}
+                  onClick={handleCloseArtwork}
                 >
                   Continuar recorrido
                 </button>
@@ -426,7 +459,20 @@ export function CuratorOverlay({
             aria-label="Cerrar aviso"
             onClick={onDismissNotice}
           >
-            ×
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
           </button>
         </aside>
       )}

@@ -6,12 +6,15 @@ import { AudioEngine, DEFAULT_AUDIO_CONFIG } from '../../audio/AudioEngine.ts'
 import { useGalleryStore } from '../../stores/useGalleryStore.ts'
 import type { ArtworkData, AudioConfig } from '../../types/gallery.ts'
 
+export type AudioEngineRef = { current: AudioEngine | null }
+
 export interface AudioManagerProps {
   scene: Object3D
   artworks: readonly ArtworkData[]
   lockSelector?: string
   config?: AudioConfig
   onError?: (error: Error) => void
+  engineRef?: AudioEngineRef
 }
 
 const reportError = (error: Error) => console.error('[MUNAL Audio]', error)
@@ -19,7 +22,7 @@ const reportError = (error: Error) => console.error('[MUNAL Audio]', error)
 /** Montar una vez dentro del Canvas, junto a PlayerRig. No renderiza elementos visuales. */
 export function AudioManager({
   scene, artworks, lockSelector = '#enter-gallery', config = DEFAULT_AUDIO_CONFIG,
-  onError = reportError,
+  onError = reportError, engineRef,
 }: AudioManagerProps) {
   const camera = useThree((state) => state.camera)
   const canvas = useThree((state) => state.gl.domElement)
@@ -40,9 +43,11 @@ export function AudioManager({
     }
     const syncActive = () => {
       if (document.pointerLockElement === canvas) entered = true
-      engine.current?.setActive(!document.hidden && document.hasFocus() && !useGalleryStore.getState().isTransitioning && (
-        document.pointerLockElement === canvas
-        || (entered && useGalleryStore.getState().isInspecting)
+      const state = useGalleryStore.getState()
+      engine.current?.setActive(!document.hidden && document.hasFocus() && !state.isTransitioning && (
+        state.isExploring
+        || document.pointerLockElement === canvas
+        || (entered && state.isInspecting)
       ))
     }
     const start = () => {
@@ -57,6 +62,7 @@ export function AudioManager({
           })
           if (special.length && !anchor) throw new Error(`No se encontró la placa ${name} para anclar la canción.`)
           engine.current = new AudioEngine(camera, anchor, import.meta.env.BASE_URL)
+          if (engineRef) engineRef.current = engine.current
           engine.current.setConfig(latest.current.config)
         }
         // Captura del mismo clic que recibe PointerLockControls; resume antes de las descargas.
@@ -69,6 +75,7 @@ export function AudioManager({
       if (event.target instanceof Element && event.target.closest(lockSelector)) start()
     }
     const unsubscribe = useGalleryStore.subscribe((state) => state.isInspecting, syncActive)
+    const unsubscribeExploring = useGalleryStore.subscribe((state) => state.isExploring, syncActive)
     const unsubscribeTransition = useGalleryStore.subscribe((state) => state.isTransitioning, syncActive)
     if (document.pointerLockElement === canvas) start()
     document.addEventListener('click', click, true)
@@ -79,6 +86,7 @@ export function AudioManager({
     return () => {
       disposed = true
       unsubscribe()
+      unsubscribeExploring()
       unsubscribeTransition()
       document.removeEventListener('click', click, true)
       document.removeEventListener('pointerlockchange', syncActive)
@@ -87,12 +95,12 @@ export function AudioManager({
       window.removeEventListener('focus', syncActive)
       engine.current?.dispose()
       engine.current = null
+      if (engineRef) engineRef.current = null
     }
-  }, [camera, canvas, scene, artworks, lockSelector])
+  }, [camera, canvas, scene, artworks, lockSelector, engineRef])
 
   useFrame(() => {
-    const state = useGalleryStore.getState()
-    engine.current?.update(state.isInspecting ? 0 : state.rawSpeed, state.isGrounded)
+    engine.current?.update()
   })
 
   return null

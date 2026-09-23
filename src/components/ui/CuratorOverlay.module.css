@@ -512,14 +512,21 @@
 }
 
 .closeButton {
-  display: grid;
-  place-items: center;
-  min-width: 44px;
-  min-height: 44px;
-  padding: 0.2rem;
-  font-size: 1.5rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  min-width: 42px;
+  min-height: 42px;
+  padding: 0;
   border-radius: 50%;
   cursor: pointer;
+  transition: background-color 0.2s, transform 0.15s, border-color 0.2s;
+}
+
+.closeButton:active {
+  transform: scale(0.92);
 }
 
 .artwork {

@@ -52,16 +52,22 @@
   background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(213, 184, 118, 0.3);
   color: #f3ede0;
-  font-size: 1.2rem;
-  display: grid;
-  place-items: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
   cursor: pointer;
-  transition: background-color 0.2s, transform 0.15s;
+  transition: background-color 0.2s, transform 0.15s, border-color 0.2s;
+}
+
+.closeButton:hover {
+  background: rgba(213, 184, 118, 0.2);
+  border-color: rgba(213, 184, 118, 0.6);
+  color: #ffffff;
 }
 
 .closeButton:active {
   transform: scale(0.92);
-  background: rgba(213, 184, 118, 0.2);
 }
 
 .header {

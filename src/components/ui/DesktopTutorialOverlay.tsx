@@ -8,7 +8,8 @@ interface DesktopTutorialOverlayProps {
 export function DesktopTutorialOverlay({ onClose }: DesktopTutorialOverlayProps) {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' || e.code === 'Enter') {
+      if (e.code === 'Enter' || e.code === 'NumpadEnter' || e.code === 'Space' || e.key === 'Escape') {
+        e.preventDefault()
         e.stopPropagation()
         onClose()
       }
@@ -35,7 +36,20 @@ export function DesktopTutorialOverlay({ onClose }: DesktopTutorialOverlayProps)
           onClick={onClose}
           aria-label="Cerrar tutorial y empezar recorrido"
         >
-          ✕
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+          >
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
         </button>
 
         <header className={styles.header}>
@@ -119,7 +133,8 @@ export function DesktopTutorialOverlay({ onClose }: DesktopTutorialOverlayProps)
           className={styles.startButton}
           onClick={onClose}
         >
-          ¡Entendido! Comenzar recorrido
+          <span className={styles.enterKeyBadge}>Enter ↵</span>
+          <span>Presiona Enter para empezar</span>
         </button>
       </div>
     </div>

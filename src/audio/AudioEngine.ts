@@ -21,17 +21,14 @@ export class AudioEngine {
   private readonly songPosition = new Vector3()
   private readonly baseUrl: string
   private config: AudioConfig = DEFAULT_AUDIO_CONFIG
-  private clips: readonly AudioBuffer[] = []
+  private clips: AudioBuffer[] = []
   private loading: Promise<void> | null = null
   private abort: AbortController | null = null
   private ready = false
   private unlocked = false
   private active = false
   private disposed = false
-  private nextFoot = 0
-  private phase = 0
-  private walking = false
-  private lastTime = 0
+  private lastPlayedIndex = -1
   private readonly hasSong: boolean
 
   constructor(camera: Camera, specialArtwork?: Mesh, baseUrl = '/') {
@@ -109,16 +106,15 @@ export class AudioEngine {
     this.abort = abort
     this.loading = Promise.all([
       this.loadBuffer('room_ir.wav', abort.signal),
-      this.loadBuffer('footstep_wood_01.wav', abort.signal),
-      this.loadBuffer('footstep_wood_02.wav', abort.signal),
+      Promise.all([1, 2, 3, 4].map((number) => this.loadBuffer(`footstep_wood_0${number}.wav`, abort.signal))),
       this.hasSong ? this.loadBuffer('special_song.mp3', abort.signal) : Promise.resolve(null),
-    ]).then(([ir, first, second, song]) => {
+    ]).then(([ir, clips, song]) => {
       if (this.disposed) return
       if (![1, 2, 4].includes(ir.numberOfChannels)) {
         throw new Error('room_ir.wav debe tener 1, 2 o 4 canales para ConvolverNode.')
       }
       this.convolver.buffer = ir
-      this.clips = [first, second]
+      this.clips = clips
       if (song) this.song.setBuffer(song)
       this.ready = true
     }).catch((error: unknown) => {
@@ -144,9 +140,9 @@ export class AudioEngine {
   setActive(active: boolean) {
     if (this.disposed || this.active === active) return
     this.active = active
-    this.lastTime = this.context.currentTime
+    const now = this.context.currentTime
     this.master.gain.setTargetAtTime(
-      active && !this.config.muted ? this.config.masterVolume : 0, this.lastTime, 0.02,
+      active && !this.config.muted ? this.config.masterVolume : 0, now, 0.02,
     )
     if (!active) {
       this.stopSteps()
@@ -157,12 +153,35 @@ export class AudioEngine {
     }
   }
 
-  /** Invocar después de la física, sin setters React. speed es rapidez horizontal real en m/s. */
-  update(speed: number, grounded: boolean) {
+  /** Reproduce una variación evitando repetir la última selección. */
+  playRandomFootstep(): void {
+    if (this.disposed || !this.active || !this.unlocked || !this.ready
+      || this.config.muted || this.context.state !== 'running' || !this.clips.length) return
+    let index = Math.floor(Math.random() * this.clips.length)
+    if (this.clips.length > 1 && index === this.lastPlayedIndex) {
+      index = (index + 1 + Math.floor(Math.random() * (this.clips.length - 1))) % this.clips.length
+    }
+    this.lastPlayedIndex = index
+    const source = this.context.createBufferSource()
+    const gain = this.context.createGain()
+    source.buffer = this.clips[index]
+    source.playbackRate.value = 0.96 + Math.random() * 0.08
+    gain.gain.value = 0.27 + Math.random() * 0.06
+    source.connect(gain)
+    gain.connect(this.footsteps)
+    source.onended = () => {
+      source.disconnect()
+      gain.disconnect()
+      this.footSources.delete(source)
+    }
+    this.footSources.add(source)
+    source.start()
+  }
+
+  /** Actualiza únicamente la capa ambiental; los pasos se disparan por distancia en PlayerRig. */
+  update() {
     if (this.disposed) return
     const now = this.context.currentTime
-    const elapsed = Math.min(0.1, Math.max(0, now - this.lastTime))
-    this.lastTime = now
     if (!this.active || !this.unlocked || !this.ready || this.context.state !== 'running') {
       this.stopSteps()
       return
@@ -176,28 +195,9 @@ export class AudioEngine {
     this.song.setVolume(this.hasSong ? this.config.ambientVolume * t * t * (3 - 2 * t) : 0)
     if (this.hasSong && !this.song.isPlaying) this.song.play()
 
-    if (this.config.muted || !grounded || !Number.isFinite(speed) || speed < 0.1) {
-      this.stopSteps()
-      return
-    }
-    if (!this.walking) { this.phase = 1; this.walking = true }
-    else this.phase += elapsed * Math.min(3.5, speed / 0.9)
-    if (this.phase >= 1) {
-      this.phase %= 1 // Sin ráfagas de pasos atrasados después de una pausa.
-      const source = this.context.createBufferSource() // Web Audio: fuente de un solo uso por pisada.
-      source.buffer = this.clips[this.nextFoot]
-      this.nextFoot = 1 - this.nextFoot
-      source.playbackRate.value = 0.95 + Math.random() * 0.1
-      source.connect(this.footsteps)
-      source.onended = () => { source.disconnect(); this.footSources.delete(source) }
-      this.footSources.add(source)
-      source.start(now)
-    }
   }
 
   private stopSteps() {
-    this.phase = 0
-    this.walking = false
     for (const source of this.footSources) {
       source.onended = null
       source.stop()

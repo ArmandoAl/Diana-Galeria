@@ -3,6 +3,7 @@ import type { BufferGeometry, Material, Object3D, Texture } from 'three'
 import { computeBoundsTree, disposeBoundsTree } from 'three-mesh-bvh'
 import type { ArtworkData } from '../types/gallery.ts'
 import { MAX_ROOM_CAPACITY, ROOM_PALETTES } from '../data/galleryRooms.ts'
+import { computeAdaptiveArtworkLayout } from './wallLayout.ts'
 
 /** Copias propias: ni materiales ni texturas de la caché de useGLTF/useTexture se mutan. */
 export function prepareGallery(source: Object3D, sourceLightmap: Texture,
@@ -50,15 +51,10 @@ export function prepareGallery(source: Object3D, sourceLightmap: Texture,
         const image = images[index].image as { width?: number; height?: number } | undefined
         const width = Number(plane.userData.display_width ?? 1.8)
         const height = Number(plane.userData.display_height ?? 1.2)
-        const maxWidth = Number(plane.userData.max_width ?? width)
-        const maxHeight = Number(plane.userData.max_height ?? height)
         const aspect = image?.width && image?.height ? image.width / image.height : width / height
-        const targetWidth = Math.min(maxWidth, maxHeight * aspect)
-        const targetHeight = Math.min(maxHeight, maxWidth / aspect)
-        const scale = new Vector3(size.x > size.z ? targetWidth / width : 1,
-          targetHeight / height, size.z > size.x ? targetWidth / width : 1)
+        const fit = computeAdaptiveArtworkLayout(Number(slot), center, size, aspect, width, height)
         object.geometry = sourceGeometry.clone().translate(-center.x, -center.y, -center.z)
-          .scale(scale.x, scale.y, scale.z).translate(center.x, center.y, center.z)
+          .scale(fit.scale.x, fit.scale.y, fit.scale.z).translate(fit.targetCenter.x, fit.targetCenter.y, fit.targetCenter.z)
         geometries.add(object.geometry)
       }
       if (index >= 0 && !frameMatch) {

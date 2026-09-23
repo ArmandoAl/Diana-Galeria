@@ -8,12 +8,14 @@ import { KinematicPlayer } from '../../controllers/KinematicPlayer.ts'
 import { ArtworkFocus } from '../../controllers/ArtworkFocus.ts'
 import { useGalleryStore } from '../../stores/useGalleryStore.ts'
 import type { ArtworkData } from '../../types/gallery.ts'
+import type { AudioEngineRef } from '../audio/AudioManager.tsx'
 
 export interface PlayerRigProps {
   /** Escena GLB ya montada, con transformaciones definitivas. */
   scene: Object3D
   collider?: Mesh
   artworks: readonly ArtworkData[]
+  audioEngineRef?: AudioEngineRef
   spawn?: readonly [number, number, number]
   /** Selector de un botón HTML explícito para entrar/reanudar el recorrido. */
   lockSelector?: string
@@ -27,7 +29,7 @@ export interface PlayerRigProps {
 const DEFAULT_SPAWN = [0, 0, 0] as const
 
 export function PlayerRig({
-  scene, collider, artworks, spawn = DEFAULT_SPAWN, lockSelector = '#enter-gallery',
+  scene, collider, artworks, audioEngineRef, spawn = DEFAULT_SPAWN, lockSelector = '#enter-gallery',
   onMotion, onLockChange, onDoor, facing = 0,
 }: PlayerRigProps) {
   const camera = useThree((state) => state.camera)
@@ -38,6 +40,7 @@ export function PlayerRig({
   const keys = useRef(new Set<string>())
   const vectors = useRef({ forward: new Vector3(), right: new Vector3(), wish: new Vector3() })
   const focusElapsed = useRef(0)
+  const distanceAccumulated = useRef(0)
   const [spawnX, spawnY, spawnZ] = spawn
 
   useEffect(() => {
@@ -86,7 +89,10 @@ export function PlayerRig({
     const release = () => {
       stop()
       controls.current?.unlock()
-      useGalleryStore.getState().setIsExploring(false)
+    }
+    const unlockForModal = () => {
+      stop()
+      controls.current?.unlock()
     }
     const contemplate = () => {
       const state = useGalleryStore.getState()
@@ -101,7 +107,14 @@ export function PlayerRig({
       const artwork = focus.current?.find(camera.position, vectors.current.forward)
       if (artwork) state.openArtworkModal(artwork)
     }
-    const click = (event: MouseEvent) => { if (event.button === 0) contemplate() }
+    const click = (event: MouseEvent) => {
+      if (event.button === 0) {
+        if (!controls.current?.isLocked && !useGalleryStore.getState().isMobile && useGalleryStore.getState().isExploring) {
+          controls.current?.lock()
+        }
+        contemplate()
+      }
+    }
     const keydown = (event: KeyboardEvent) => {
       if (event.target instanceof HTMLElement
         && (event.target.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(event.target.tagName))) return
@@ -123,7 +136,7 @@ export function PlayerRig({
     }
     const unsubscribeInspecting = useGalleryStore.subscribe(
       (state) => state.isInspecting,
-      (inspecting) => { if (inspecting) release() },
+      (inspecting) => { if (inspecting) unlockForModal() },
       { fireImmediately: true },
     )
     const unsubscribeInteraction = useGalleryStore.subscribe(
@@ -196,6 +209,14 @@ export function PlayerRig({
 
     const isRunning = enabled && (input.has('ShiftLeft') || input.has('ShiftRight') || state.touchRunning)
     current.update(delta, wish, isRunning)
+    const horizontalSpeed = Math.hypot(current.velocity.x, current.velocity.z)
+    if (enabled && current.isGrounded && horizontalSpeed >= 0.15) {
+      distanceAccumulated.current += horizontalSpeed * delta
+      if (distanceAccumulated.current >= 0.65) {
+        audioEngineRef?.current?.playRandomFootstep()
+        distanceAccumulated.current = 0
+      }
+    } else distanceAccumulated.current = 0
     camera.position.set(current.position.x, current.position.y + current.eyeHeight, current.position.z)
     camera.updateMatrixWorld()
     state.updatePlayerTransform(current.position, current.velocity, current.isGrounded, enabled ? current.speed : 0)

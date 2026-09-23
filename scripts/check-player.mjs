@@ -71,7 +71,7 @@ assert.deepEqual(source.geometry.attributes.position.array, originalVertices)
 
 const data = parseArtworks(JSON.parse(await readFile(
   new URL('../public/data/artworks.json', import.meta.url), 'utf8',
-)))
+))).slice(0, 8)
 const focus = new ArtworkFocus(scene, data)
 const origin = new Vector3()
 const direction = new Vector3()

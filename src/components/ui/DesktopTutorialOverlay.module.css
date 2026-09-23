@@ -1,0 +1,213 @@
+.tutorialOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  padding: 1.5rem;
+  background: rgba(7, 10, 11, 0.88);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  pointer-events: auto;
+  user-select: none;
+  -webkit-user-select: none;
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.tutorialCard {
+  width: min(100%, 38rem);
+  background: linear-gradient(160deg, rgba(22, 28, 25, 0.96) 0%, rgba(11, 15, 14, 0.98) 100%);
+  border: 1.5px solid rgba(213, 184, 118, 0.55);
+  border-radius: 20px;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.75), 0 0 30px rgba(213, 184, 118, 0.12);
+  padding: clamp(1.5rem, 5vw, 2.5rem);
+  color: #f3ede0;
+  text-align: center;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.closeButton {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(213, 184, 118, 0.3);
+  color: #f3ede0;
+  font-size: 1.2rem;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.15s;
+}
+
+.closeButton:active {
+  transform: scale(0.92);
+  background: rgba(213, 184, 118, 0.2);
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.eyebrow {
+  color: #d5b876;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+.title {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(1.4rem, 4.5vw, 1.85rem);
+  color: #fbf8f2;
+  margin: 0;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+  margin: 0.25rem 0;
+}
+
+.controlCard {
+  background: rgba(8, 12, 11, 0.65);
+  border: 1px solid rgba(213, 184, 118, 0.25);
+  border-radius: 14px;
+  padding: 1.1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  text-align: center;
+}
+
+.keyGroup {
+  display: flex;
+  gap: 0.35rem;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.25rem;
+}
+
+.keyCluster {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  margin-bottom: 0.25rem;
+}
+
+.keyClusterRow {
+  display: flex;
+  gap: 0.3rem;
+}
+
+.kbd {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #f4e8cf;
+  background: rgba(30, 36, 32, 0.85);
+  border: 1.5px solid rgba(213, 184, 118, 0.5);
+  border-radius: 6px;
+  padding: 0.35rem 0.65rem;
+  box-shadow: 0 3px 0 rgba(0, 0, 0, 0.6), 0 0 8px rgba(213, 184, 118, 0.2);
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+}
+
+.mouseIconWrap {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(213, 184, 118, 0.15) 0%, rgba(9, 13, 12, 0.8) 100%);
+  border: 1.5px solid rgba(213, 184, 118, 0.4);
+  display: grid;
+  place-items: center;
+  color: #d5b876;
+}
+
+.cardTitle {
+  font-family: Georgia, serif;
+  font-size: 0.95rem;
+  color: #eeddb7;
+  font-weight: 600;
+  margin: 0;
+}
+
+.cardDesc {
+  font-size: 0.78rem;
+  line-height: 1.45;
+  color: #d2cbbe;
+  margin: 0;
+}
+
+.shortcutBanner {
+  background: rgba(213, 184, 118, 0.1);
+  border: 1px solid rgba(213, 184, 118, 0.3);
+  border-radius: 12px;
+  padding: 0.85rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  font-size: 0.8rem;
+  color: #f7ecd5;
+  text-align: left;
+}
+
+.shortcutRow {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.startButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.95rem 1.8rem;
+  background: linear-gradient(135deg, #dfc488 0%, #c4a45e 100%);
+  color: #17140e;
+  border: 1.5px solid #fff5d6;
+  border-radius: 30px;
+  font-family: Georgia, serif;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(213, 184, 118, 0.4);
+  transition: transform 0.15s, box-shadow 0.2s;
+  min-height: 50px;
+  width: 100%;
+}
+
+.startButton:active {
+  transform: scale(0.97);
+  box-shadow: 0 2px 10px rgba(213, 184, 118, 0.3);
+}

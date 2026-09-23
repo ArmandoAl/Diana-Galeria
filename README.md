@@ -8,7 +8,80 @@ la solemnidad de un espacio patrimonial real. Inspirado en la arquitectura y
 el criterio curatorial del Museo Nacional de Arte (MUNAL) de la Ciudad de
 México; no es un producto oficial del museo.
 
-![Vista de la sala](assets/munal-gallery-preview.png)
+![Vista de la sala](assets/munal-gallery-daylight-preview.png)
+
+## Versión actual — luz diurna y recorrido circular
+
+Abrir **`assets/munal-gallery-daylight.blend`**. Incluye texturas empacadas,
+ventanas con carpintería y cristal, un jardín exterior fotográfico, dos puertas
+de madera con paneles y latón, y 14 montajes centrados. Las versiones anteriores
+siguen conservadas. Generador: `scripts/create_daylight_gallery.py`, ejecutado
+sobre `assets/munal-gallery-sections.blend`; rechaza sobrescribir destinos.
+
+La app carga `public/models/munal_gallery_daylight.glb` y
+`public/textures/munal_daylight_lightmap.png`. El sol direccional, el cielo y las
+sombras de la carpintería están horneados en 4096²/1024 muestras. El bake usa
+paredes neutras para reutilizar la irradiancia con distintas paletas; no simula
+de nuevo el rebote cromático de cada color. Los lienzos mantienen una exposición
+uniforme y los marcos reflejan el entorno. El jardín es un fondo panorámico situado fuera de la sala, no un
+exterior transitable. Origen del recurso y prompt: [GARDEN-SOURCE](assets/GARDEN-SOURCE.md).
+
+`public/data/artworks.json` admite cualquier número positivo de obras: agregar
+fichas con id y slotIndex global únicos, imagen local, título, autor, año,
+técnica, dimensiones, descripción e `isSpecial` booleano. El orden de la lista
+determina el recorrido. Se permite cero o una dedicatoria especial en todo el
+catálogo, independientemente de su posición. Las fichas provisionales existentes
+se conservan; no se han inventado pinturas ni datos curatoriales.
+
+`createGalleryRooms` forma una lista circular con enlaces `next` y `previous`,
+máximo 14 obras por sala y montajes locales reasignados desde cero. Por ejemplo,
+40 obras producen salas de 14, 14 y 12. Cada sala usa una familia de color:
+salvia, granate, tierra; las mamparas llevan un tono más oscuro. Actualmente hay
+ocho imágenes, así que el catálogo real forma una sola sala. Al ampliar el JSON
+aparecen automáticamente las secciones adicionales.
+
+Frente a una puerta, a menos de 2 m y mirándola, pulsar **E, F o clic**. Un
+fundido oculta el cambio de obras, paleta y punto de entrada; la última sala
+vuelve a la primera y la puerta opuesta retrocede. Se bloquea el movimiento
+durante el cambio, se conserva Pointer Lock, se limpian fichas y proximidad, y
+se respeta `prefers-reduced-motion`. Los montajes sin obra se ocultan. Las
+imágenes se encajan sin recorte ni deformación en 1.8 × 1.5 m, centradas a 1.65 m.
+
+La precarga del catálogo evita interrupciones en las transiciones y está pensada
+para unas 40 imágenes optimizadas para web; catálogos mayores necesitarán carga
+por sección. No incluye interfaz de subida de archivos.
+
+Los archivos de `public/audio/` aún no están presentes. El recorrido visual
+funciona sin ellos y muestra un aviso breve; el diagnóstico técnico queda en
+la consola. No se ha sustituido la canción personal por audio inventado.
+
+Validación: `npm run test:rooms` prueba cantidades de 1 a 40, 14/14/12, vuelta al
+inicio, paletas, proporciones, puertas y un recorrido físico completo sobre el
+GLB real. `test:room-assets` verifica el bake, cristal y colisiones; `test:scene`,
+`test:gallery`, `test:audio` y `test:overlay` cubren los consumidores existentes.
+
+## Diseño actual — tres ambientes (19 de septiembre de 2026)
+
+Abrir **`assets/munal-gallery-sections.blend`**: es la versión editable actual,
+con texturas empacadas. La anterior sigue en `assets/munal-gallery-baked.blend`.
+Los archivos están en esta carpeta del proyecto en Documentos; Blender está instalado en el SSD.
+
+Dos mamparas rojo MUNAL de 4.8 × 3.6 m dividen el recorrido en tres ambientes,
+con pasos alternados de 3.2 m. Se conservan las ventanas, pilastras, artesonado,
+parquet y las ocho obras actuales. Hay ocho posiciones adicionales de 1.8 × 1.2 m
+marcadas con empties en la colección `Espacios_Para_Nuevas_Obras`; son reservas
+de espacio en Blender. Publicar nuevas obras requiere incorporar sus imágenes,
+marcos y fichas, y ampliar el catálogo de la app, que todavía valida ocho obras.
+
+La app carga `public/models/munal_gallery_sections.glb` y
+`public/textures/munal_sections_lightmap.png`, con un bake nuevo de 4096²/1024
+muestras y colisiones para ambas mamparas. `npm run test:room-assets` verifica
+el modelo real y el tránsito por los pasos en ambos sentidos a 30/60/144 FPS.
+
+Generador: `scripts/create_gallery_sections.py`, ejecutado sobre el `.blend`
+anterior; reutiliza el pipeline existente y rechaza destinos que ya existen.
+Vista de control: `assets/munal-gallery-sections-preview.png` (render Blender).
+Las siguientes secciones documentan las versiones anteriores del proyecto.
 
 ---
 

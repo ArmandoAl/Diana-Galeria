@@ -31,7 +31,7 @@ export class ArtworkFocus {
       }
     })
     if (assigned.size !== data.length) {
-      throw new Error('Faltan placas Artwork_01–Artwork_08 o metadatos slotIndex en el GLB.')
+      throw new Error('Faltan placas o metadatos slotIndex para las obras de esta sala.')
     }
     this.raycaster.far = 2
   }
@@ -47,5 +47,20 @@ export class ArtworkFocus {
     this.normalMatrix.getNormalMatrix(hit.object.matrixWorld)
     this.normal.copy(hit.face.normal).applyNormalMatrix(this.normalMatrix)
     return this.normal.dot(direction) < -0.25 ? artwork : null
+  }
+
+  findDoor(origin: Vector3, direction: Vector3): -1 | 1 | null {
+    this.raycaster.set(origin, direction)
+    this.hits.length = 0
+    this.raycaster.intersectObjects(this.meshes, false, this.hits)
+    const hit = this.hits[0]
+    if (!hit || hit.distance >= 2) return null
+    let object: Object3D | null = hit.object
+    while (object) {
+      const value: unknown = object.userData.doorDirection
+      if (value === -1 || value === 1) return value
+      object = object.parent
+    }
+    return null
   }
 }

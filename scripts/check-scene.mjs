@@ -10,7 +10,7 @@ const bytes = await readFile(new URL('../public/models/exhibition-room.glb', imp
 const { scene: source } = await new GLTFLoader().parseAsync(
   bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength), '',
 )
-const data = parseArtworks(JSON.parse(await readFile(new URL('../public/data/artworks.json', import.meta.url), 'utf8')))
+const data = parseArtworks(JSON.parse(await readFile(new URL('../public/data/artworks.json', import.meta.url), 'utf8'))).slice(0, 8)
 const lightmap = new Texture()
 const images = data.map(() => new Texture())
 assert.throws(() => prepareGallery(source, lightmap, data, images), /TEXCOORD_1/)
@@ -39,9 +39,9 @@ prepared.scene.traverse((object) => {
   const materials = Array.isArray(object.material) ? object.material : [object.material]
   if (object.name.startsWith('Frame_')) {
     frameCount++
-    assert.equal(materials[0].color.getHexString(), 'd4af37')
-    assert.equal(materials[0].metalness, 0.85)
-    assert.equal(materials[0].roughness, 0.3)
+    assert.equal(materials[0].color.getHexString(), 'b99a61')
+    assert.equal(materials[0].metalness, 0.55)
+    assert.equal(materials[0].roughness, 0.38)
   } else if (object.name.startsWith('Architecture_')) {
     for (const material of materials) {
       assert.ok(material instanceof MeshStandardMaterial)

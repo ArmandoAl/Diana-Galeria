@@ -32,12 +32,14 @@ export class AudioEngine {
   private phase = 0
   private walking = false
   private lastTime = 0
+  private readonly hasSong: boolean
 
-  constructor(camera: Camera, specialArtwork: Mesh, baseUrl = '/') {
-    if (!specialArtwork.geometry.getAttribute('position')) {
+  constructor(camera: Camera, specialArtwork?: Mesh, baseUrl = '/') {
+    if (specialArtwork && !specialArtwork.geometry.getAttribute('position')) {
       throw new Error('La obra especial necesita una malla con geometría.')
     }
     this.baseUrl = baseUrl.endsWith('/') ? baseUrl : `${baseUrl}/`
+    this.hasSong = !!specialArtwork
     this.listener = new AudioListener()
     this.context = this.listener.context
     this.master = this.context.createGain()
@@ -67,9 +69,11 @@ export class AudioEngine {
     this.song.setRolloffFactor(2)
     this.song.setVolume(0)
     // Ctrl+A en Blender deja orígenes en (0,0,0): anclar al centro local de la placa.
-    specialArtwork.geometry.computeBoundingBox()
-    specialArtwork.geometry.boundingBox!.getCenter(this.song.position)
-    specialArtwork.add(this.song)
+    if (specialArtwork) {
+      specialArtwork.geometry.computeBoundingBox()
+      specialArtwork.geometry.boundingBox!.getCenter(this.song.position)
+      specialArtwork.add(this.song)
+    } else camera.add(this.song)
     this.setConfig(DEFAULT_AUDIO_CONFIG)
   }
 
@@ -107,7 +111,7 @@ export class AudioEngine {
       this.loadBuffer('room_ir.wav', abort.signal),
       this.loadBuffer('footstep_wood_01.wav', abort.signal),
       this.loadBuffer('footstep_wood_02.wav', abort.signal),
-      this.loadBuffer('special_song.mp3', abort.signal),
+      this.hasSong ? this.loadBuffer('special_song.mp3', abort.signal) : Promise.resolve(null),
     ]).then(([ir, first, second, song]) => {
       if (this.disposed) return
       if (![1, 2, 4].includes(ir.numberOfChannels)) {
@@ -115,7 +119,7 @@ export class AudioEngine {
       }
       this.convolver.buffer = ir
       this.clips = [first, second]
-      this.song.setBuffer(song)
+      if (song) this.song.setBuffer(song)
       this.ready = true
     }).catch((error: unknown) => {
       abort.abort()
@@ -169,8 +173,8 @@ export class AudioEngine {
     const distance = this.listenerPosition.distanceTo(this.songPosition)
     // maxDistance no limita el modelo exponencial. Fade adicional 7–8 m, sin salto de volumen.
     const t = Math.max(0, Math.min(1, 8 - distance))
-    this.song.setVolume(this.config.ambientVolume * t * t * (3 - 2 * t))
-    if (!this.song.isPlaying) this.song.play()
+    this.song.setVolume(this.hasSong ? this.config.ambientVolume * t * t * (3 - 2 * t) : 0)
+    if (this.hasSong && !this.song.isPlaying) this.song.play()
 
     if (this.config.muted || !grounded || !Number.isFinite(speed) || speed < 0.1) {
       this.stopSteps()

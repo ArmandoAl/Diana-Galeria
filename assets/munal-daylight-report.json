@@ -1,0 +1,24 @@
+{
+  "size": 4096,
+  "samples": 1024,
+  "gpu": [
+    "Apple M4 (GPU - 10 cores)"
+  ],
+  "modules": 3,
+  "uv_map": "LightmapUV",
+  "uv_channel": 1,
+  "angle_degrees": 66,
+  "island_margin": 0.008,
+  "bake_margin_px": 16,
+  "passes": [
+    "DIRECT",
+    "INDIRECT"
+  ],
+  "color_pass": false,
+  "png_color_space": "linear",
+  "png_bits": 16,
+  "lightmap_gain": 5.68516731262207,
+  "hdr_peak": 5.68516731262207,
+  "png_roundtrip_max_error": 7.68899917602539e-06,
+  "uv_overlap_loops": 0
+}

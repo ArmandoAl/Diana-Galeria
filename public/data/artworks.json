@@ -94,5 +94,41 @@
     "description": "Ficha provisional de la octava obra. Sustituir por el texto curatorial aprobado antes de publicar.",
     "imagePath": "/artworks/8.jpeg",
     "isSpecial": false
+  },
+  {
+    "id": "obra-09",
+    "slotIndex": 8,
+    "title": "Obra 9 — título por confirmar",
+    "artist": "Autoría por confirmar",
+    "year": "Por confirmar",
+    "technique": "Por confirmar",
+    "dimensions": "Por confirmar",
+    "description": "Ficha provisional de la novena obra. Sustituir por el texto curatorial aprobado antes de publicar.",
+    "imagePath": "/artworks/9.jpeg",
+    "isSpecial": false
+  },
+  {
+    "id": "obra-10",
+    "slotIndex": 9,
+    "title": "Obra 10 — título por confirmar",
+    "artist": "Autoría por confirmar",
+    "year": "Por confirmar",
+    "technique": "Por confirmar",
+    "dimensions": "Por confirmar",
+    "description": "Ficha provisional de la décima obra. Sustituir por el texto curatorial aprobado antes de publicar.",
+    "imagePath": "/artworks/10.jpeg",
+    "isSpecial": false
+  },
+  {
+    "id": "obra-11",
+    "slotIndex": 10,
+    "title": "Obra 11 — título por confirmar",
+    "artist": "Autoría por confirmar",
+    "year": "Por confirmar",
+    "technique": "Por confirmar",
+    "dimensions": "Por confirmar",
+    "description": "Ficha provisional de la undécima obra. Sustituir por el texto curatorial aprobado antes de publicar.",
+    "imagePath": "/artworks/11.jpeg",
+    "isSpecial": false
   }
 ]

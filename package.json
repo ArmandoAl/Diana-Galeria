@@ -13,6 +13,7 @@
     "test:scene": "node --experimental-strip-types scripts/check-scene.mjs",
     "test:overlay": "node scripts/check-overlay.mjs",
     "test:room-assets": "node --experimental-strip-types scripts/check-room-assets.mjs",
+    "test:rooms": "node --experimental-strip-types scripts/check-rooms.mjs",
     "preview": "vite preview",
     "postinstall": "node scripts/copy-basis.mjs"
   },

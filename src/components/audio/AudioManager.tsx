@@ -40,24 +40,22 @@ export function AudioManager({
     }
     const syncActive = () => {
       if (document.pointerLockElement === canvas) entered = true
-      engine.current?.setActive(!document.hidden && document.hasFocus() && (
+      engine.current?.setActive(!document.hidden && document.hasFocus() && !useGalleryStore.getState().isTransitioning && (
         document.pointerLockElement === canvas
         || (entered && useGalleryStore.getState().isInspecting)
       ))
     }
-    const click = (event: MouseEvent) => {
-      if (!(event.target instanceof Element) || !event.target.closest(lockSelector)) return
+    const start = () => {
       try {
         if (!engine.current) {
           const special = artworks.filter((artwork) => artwork.isSpecial)
-          if (special.length !== 1) throw new Error('El catálogo necesita exactamente una obra especial.')
-          const slot = special[0].slotIndex
-          const name = `Artwork_${String(slot + 1).padStart(2, '0')}`
+          const slot = special[0]?.slotIndex
+          const name = slot === undefined ? '' : `Artwork_${String(slot + 1).padStart(2, '0')}`
           let anchor: Mesh | undefined
           scene.traverse((object) => {
-            if (object instanceof Mesh && (object.userData.slotIndex === slot || object.name === name)) anchor = object
+            if (slot !== undefined && object instanceof Mesh && (object.userData.slotIndex === slot || object.name === name)) anchor = object
           })
-          if (!anchor) throw new Error(`No se encontró la placa ${name} para anclar la canción.`)
+          if (special.length && !anchor) throw new Error(`No se encontró la placa ${name} para anclar la canción.`)
           engine.current = new AudioEngine(camera, anchor, import.meta.env.BASE_URL)
           engine.current.setConfig(latest.current.config)
         }
@@ -67,7 +65,12 @@ export function AudioManager({
         syncActive()
       } catch (error) { report(error) }
     }
+    const click = (event: MouseEvent) => {
+      if (event.target instanceof Element && event.target.closest(lockSelector)) start()
+    }
     const unsubscribe = useGalleryStore.subscribe((state) => state.isInspecting, syncActive)
+    const unsubscribeTransition = useGalleryStore.subscribe((state) => state.isTransitioning, syncActive)
+    if (document.pointerLockElement === canvas) start()
     document.addEventListener('click', click, true)
     document.addEventListener('pointerlockchange', syncActive)
     document.addEventListener('visibilitychange', syncActive)
@@ -76,6 +79,7 @@ export function AudioManager({
     return () => {
       disposed = true
       unsubscribe()
+      unsubscribeTransition()
       document.removeEventListener('click', click, true)
       document.removeEventListener('pointerlockchange', syncActive)
       document.removeEventListener('visibilitychange', syncActive)

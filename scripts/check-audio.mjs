@@ -119,6 +119,15 @@ try {
   assert.equal(context.state, 'running', 'No cerrar el contexto global compartido.')
 
   const retry = new AudioEngine(camera, artwork)
+  const ordinary = new AudioEngine(camera)
+  const beforeOrdinary = requests.length
+  await ordinary.load()
+  assert.equal(requests.length - beforeOrdinary, 3, 'Una sala sin dedicatoria no descarga la canción.')
+  ordinary.setActive(true)
+  await ordinary.unlock()
+  ordinary.update(0, true)
+  assert.equal(ordinary.song.isPlaying, false)
+  ordinary.dispose()
   globalThis.fetch = async () => ({ ok: false, status: 404 })
   await assert.rejects(retry.load(), /HTTP 404/)
   globalThis.fetch = async () => ({ ok: true, arrayBuffer: async () => new ArrayBuffer(2) })

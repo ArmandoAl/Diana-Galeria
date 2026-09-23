@@ -1,2 +1,10 @@
-.gallery-app { min-height: 100svh; }
-.gallery-canvas { position: fixed; inset: 0; }
+.gallery-app {
+  min-height: 100svh;
+  touch-action: none;
+  overflow: hidden;
+}
+.gallery-canvas {
+  position: fixed;
+  inset: 0;
+  touch-action: none;
+}

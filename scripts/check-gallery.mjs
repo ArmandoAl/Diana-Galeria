@@ -10,11 +10,14 @@ const artworks = parseArtworks(raw)
 for (const artwork of artworks) {
   await access(new URL(artwork.imagePath.slice(1), publicRoot))
 }
-for (const invalid of [null, [], raw.slice(1), raw.map(() => raw[0]),
-  raw.map((a) => ({ ...a, isSpecial: false })),
+for (const invalid of [null, [], raw.map(() => raw[0]),
+  raw.map((a) => ({ ...a, isSpecial: true })),
+  raw.map((a) => ({ ...a, slotIndex: -1 })),
   raw.map((a) => ({ ...a, title: '' })),
   raw.map((a) => ({ ...a, imagePath: '/artworks/../secret.png' })),
 ]) assert.throws(() => parseArtworks(invalid))
+assert.equal(parseArtworks(raw.slice(1)).length, raw.length - 1)
+assert.equal(parseArtworks(raw.map((a) => ({ ...a, isSpecial: false }))).length, raw.length)
 
 let notifications = 0
 let inspectionChanges = 0

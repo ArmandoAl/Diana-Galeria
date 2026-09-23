@@ -6,8 +6,8 @@ const textFields = [
 
 /** Valida el JSON externo antes de introducirlo en el estado de la aplicación. */
 export function parseArtworks(value: unknown): readonly ArtworkData[] {
-  if (!Array.isArray(value) || value.length !== 8) {
-    throw new Error('El catálogo debe contener exactamente 8 obras.')
+  if (!Array.isArray(value) || value.length === 0) {
+    throw new Error('El catálogo debe contener al menos una obra.')
   }
   const ids = new Set<string>()
   const slots = new Set<number>()
@@ -21,12 +21,12 @@ export function parseArtworks(value: unknown): readonly ArtworkData[] {
     }
     const { id, slotIndex, imagePath, isSpecial } = item
     if (typeof id !== 'string' || typeof slotIndex !== 'number'
-      || !Number.isInteger(slotIndex) || slotIndex < 0 || slotIndex > 7
+      || !Number.isSafeInteger(slotIndex) || slotIndex < 0
       || ids.has(id) || slots.has(slotIndex)) {
-      throw new Error('Cada obra requiere un id único y un slotIndex único entre 0 y 7.')
+      throw new Error('Cada obra requiere un id único y un slotIndex entero, positivo o cero, único en el catálogo.')
     }
-    if (typeof isSpecial !== 'boolean' || isSpecial !== (slotIndex === 6)) {
-      throw new Error('Solo la obra 7 (slotIndex 6) debe ser especial.')
+    if (typeof isSpecial !== 'boolean') {
+      throw new Error('isSpecial debe ser booleano.')
     }
     if (typeof imagePath !== 'string' || !/^\/artworks\/[\w-]+\.(?:jpe?g|png|webp|avif)$/i.test(imagePath)) {
       throw new Error('imagePath debe señalar una imagen local dentro de /artworks/.')
@@ -34,6 +34,7 @@ export function parseArtworks(value: unknown): readonly ArtworkData[] {
     ids.add(id)
     slots.add(slotIndex)
   }
+  if (value.filter((item) => item.isSpecial).length > 1) throw new Error('Solo puede haber una dedicatoria especial.')
   return value as ArtworkData[]
 }
 

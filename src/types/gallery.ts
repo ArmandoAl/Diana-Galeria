@@ -1,6 +1,6 @@
 import type { Vector3 } from 'three'
 
-export type ArtworkSlotIndex = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7
+export type ArtworkSlotIndex = number
 
 export interface ArtworkData {
   readonly id: string

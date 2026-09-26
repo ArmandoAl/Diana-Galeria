@@ -7,8 +7,10 @@ export interface GalleryState extends PlayerTransform {
   /** Rapidez horizontal real tras colisiones, no reactiva, en m/s. */
   rawSpeed: number
   activeArtwork: ArtworkData | null
+  isHousePhotosOpen: boolean
   nearbyArtwork: ArtworkData | null
   isNearArtwork: boolean
+  isNearHouse: boolean
   isInspecting: boolean
   isTransitioning: boolean
   nearbyDoor: -1 | 1 | null
@@ -28,6 +30,8 @@ export interface GalleryState extends PlayerTransform {
   setTransitioning: (active: boolean) => void
   setNearDoor: (direction: -1 | 1 | null) => void
   openArtworkModal: (artwork: ArtworkData) => void
+  openHousePhotos: () => void
+  setNearHouse: (near: boolean) => void
   closeArtworkModal: () => void
   setNearArtwork: (artwork: ArtworkData | null) => void
   updatePlayerTransform: (position: Vector3, velocity: Vector3, grounded: boolean, speed?: number) => void
@@ -36,8 +40,10 @@ export interface GalleryState extends PlayerTransform {
 export const useGalleryStore = create<GalleryState>()(
   subscribeWithSelector((set, get) => ({
     activeArtwork: null,
+    isHousePhotosOpen: false,
     nearbyArtwork: null,
     isNearArtwork: false,
+    isNearHouse: false,
     isInspecting: false,
     isTransitioning: false,
     nearbyDoor: null,
@@ -68,7 +74,7 @@ export const useGalleryStore = create<GalleryState>()(
       return res
     },
     triggerInteraction: () => set((state) => ({ interactionTrigger: state.interactionTrigger + 1 })),
-    setTransitioning: (active) => set({ isTransitioning: active, nearbyDoor: null, nearbyArtwork: null, isNearArtwork: false }),
+    setTransitioning: (active) => set({ isTransitioning: active, nearbyDoor: null, nearbyArtwork: null, isNearArtwork: false, isNearHouse: false }),
     setNearDoor: (direction) => {
       if (get().nearbyDoor !== direction) set({ nearbyDoor: direction })
     },
@@ -79,11 +85,13 @@ export const useGalleryStore = create<GalleryState>()(
 
     openArtworkModal: (artwork) => {
       if (get().isInspecting && get().activeArtwork === artwork) return
-      set({ activeArtwork: artwork, isInspecting: true })
+      set({ activeArtwork: artwork, isHousePhotosOpen: false, isInspecting: true })
     },
+    openHousePhotos: () => set({ activeArtwork: null, isHousePhotosOpen: true, isInspecting: true }),
+    setNearHouse: (near) => { if (get().isNearHouse !== near) set({ isNearHouse: near }) },
     closeArtworkModal: () => {
       if (!get().isInspecting) return
-      set({ activeArtwork: null, isInspecting: false })
+      set({ activeArtwork: null, isHousePhotosOpen: false, isInspecting: false })
     },
     setNearArtwork: (artwork) => {
       if (get().nearbyArtwork === artwork) return

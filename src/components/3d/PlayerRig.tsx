@@ -68,6 +68,7 @@ export function PlayerRig({
       controller.dispose()
       useGalleryStore.getState().setNearArtwork(null)
       useGalleryStore.getState().setNearDoor(null)
+      useGalleryStore.getState().setNearHouse(false)
     }
   }, [scene, collider, artworks, camera, spawnX, spawnY, spawnZ, facing])
 
@@ -104,6 +105,10 @@ export function PlayerRig({
       camera.getWorldDirection(vectors.current.forward)
       const door = focus.current?.findDoor(camera.position, vectors.current.forward)
       if (door && onDoor) { stop(); onDoor(door); return }
+      if (focus.current?.findHouse(camera.position, vectors.current.forward)) {
+        state.openHousePhotos()
+        return
+      }
       const artwork = focus.current?.find(camera.position, vectors.current.forward)
       if (artwork) state.openArtworkModal(artwork)
     }
@@ -229,6 +234,7 @@ export function PlayerRig({
       camera.getWorldDirection(forward)
       state.setNearArtwork(enabled ? focus.current?.find(camera.position, forward) ?? null : null)
       state.setNearDoor(enabled ? focus.current?.findDoor(camera.position, forward) ?? null : null)
+      state.setNearHouse(enabled && (focus.current?.findHouse(camera.position, forward) ?? false))
     }
   }, -1) // Resolver física antes de AudioManager (prioridad 0), independientemente del orden JSX.
 

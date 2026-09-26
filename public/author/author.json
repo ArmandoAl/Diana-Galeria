@@ -1,0 +1,48 @@
+{
+  "artist": {
+    "name": "Diana Carranza Lucatero",
+    "location": "Ensenada, Baja California, México",
+    "education": "Licenciatura en Artes Plásticas, Universidad Autónoma de Baja California",
+    "biography": "Originaria de Baja California, Diana Carranza Lucatero estudia la Licenciatura en Artes Plásticas en la Universidad Autónoma de Baja California. Ha participado en exposiciones colectivas en Galería Antesala, CEART Ensenada, Galería Petanca, La Perlita Galería y la Colección Elías Fontes. Su trabajo aborda el hogar, la identidad y los vínculos familiares desde una mirada íntima y simbólica.",
+    "statement": "Mi práctica artística se centra en los vínculos invisibles que configuran nuestra identidad: la memoria, la herencia y las cicatrices emocionales transmitidas a través de las generaciones. Mediante pintura al óleo sobre madera, combino símbolos íntimos para explorar cómo las estructuras familiares moldean nuestro modo de habitar el mundo.\n\nEn este cuerpo de trabajo, investigo el hogar como una construcción emocional. Las obras actúan como umbrales: invitan al espectador a reconocer sus propias heridas y memorias ancestrales. Creo que el arte no solo revela, sino que también repara, ofreciendo posibilidades de transformación allí donde el lenguaje no alcanza.\n\nEn un presente marcado por la urgencia de sanar y reconfigurar los lazos familiares, mi propuesta busca generar una experiencia sensible que dialogue con lo personal.",
+    "project": {
+      "title": "Todo lo que siento",
+      "year": "2025",
+      "technique": "Óleo sobre madera",
+      "description": "Este proyecto explora los vínculos familiares como la primera casa emocional que habitamos. La madera simboliza las raíces y el paso del tiempo; los símbolos hablan de las herencias afectivas que moldean nuestra identidad. Desde el reconocimiento y la sanación, la obra busca resignificar el dolor y reconstruir lo dañado."
+    },
+    "exhibitions": [
+      { "year": "2025", "locations": "Ensenada y Mexicali, Baja California" },
+      { "year": "2024", "locations": "Ensenada, Baja California" }
+    ]
+  },
+  "visualStyle": {
+    "palette": ["#F5F1EA", "#171613", "#9B8068"],
+    "typography": "Titulares editoriales en serif de alto contraste; cuerpo sobrio y legible.",
+    "composition": "Márgenes amplios, fondos marfil, títulos grandes, columnas breves e imágenes de obra o proceso como foco visual.",
+    "source": "Portafolio proporcionado por Diana Carranza Lucatero"
+  },
+  "galleryCards": [
+    {
+      "roomIndex": 0,
+      "imagePath": "/author/author2.jpg",
+      "eyebrow": "La artista",
+      "title": "Diana Carranza Lucatero",
+      "text": "Artista visual originaria de Baja California y estudiante de Artes Plásticas en la UABC. Su trabajo explora el hogar, la identidad y los vínculos familiares desde una mirada íntima y simbólica."
+    },
+    {
+      "roomIndex": 1,
+      "imagePath": "/author/author6.png",
+      "eyebrow": "Declaración de artista",
+      "title": "Memoria y herencia",
+      "text": "A través del óleo sobre madera, Diana reúne símbolos íntimos para hablar de las memorias y heridas que pasan entre generaciones. El hogar aparece como una construcción emocional y el arte como posibilidad de reconocer y transformar lo heredado."
+    },
+    {
+      "roomIndex": 2,
+      "imagePath": "/author/author5.png",
+      "eyebrow": "Proyecto · 2025",
+      "title": "Todo lo que siento",
+      "text": "La serie mira los vínculos familiares como la primera casa emocional. La madera evoca las raíces y el tiempo; sus símbolos buscan resignificar el dolor y abrir espacio para sanar y reconstruir."
+    }
+  ]
+}

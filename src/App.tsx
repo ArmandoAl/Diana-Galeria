@@ -3,10 +3,12 @@ import type { ReactNode } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { ACESFilmicToneMapping, SRGBColorSpace } from 'three'
 import { loadArtworks } from './data/loadArtworks.ts'
+import { loadArtistProfile } from './data/loadArtistProfile.ts'
 import { createGalleryRooms } from './data/galleryRooms.ts'
 import { useGalleryStore } from './stores/useGalleryStore.ts'
 import { DEFAULT_AUDIO_CONFIG } from './audio/AudioEngine.ts'
 import type { ArtworkData } from './types/gallery.ts'
+import type { ArtistProfile } from './types/artist.ts'
 import { CuratorOverlay } from './components/ui/CuratorOverlay.tsx'
 import './App.css'
 
@@ -22,6 +24,7 @@ class SceneBoundary extends Component<{ children: ReactNode; onError: (error: Er
 
 export default function App() {
   const [artworks, setArtworks] = useState<readonly ArtworkData[] | null>(null)
+  const [artist, setArtist] = useState<ArtistProfile | null>(null)
   const [failure, setFailure] = useState<Error | null>(null)
   const [notice, setNotice] = useState('')
   const [attempt, setAttempt] = useState(0)
@@ -80,10 +83,12 @@ export default function App() {
       // Suspense conserva también errores: descartar entradas fallidas antes de reintentar.
       const { useGLTF, useTexture } = await import('@react-three/drei')
       useGLTF.clear(import.meta.env.BASE_URL + 'models/munal_gallery_daylight.glb')
+      useGLTF.clear(import.meta.env.BASE_URL + 'models/casita-madriguera.glb')
       useTexture.clear(import.meta.env.BASE_URL + 'textures/munal_daylight_lightmap.png')
       useTexture.clear(artworks.map((artwork) => import.meta.env.BASE_URL + artwork.imagePath.slice(1)))
+      useTexture.clear(artist?.galleryCards.map((card) => import.meta.env.BASE_URL + card.imagePath.slice(1)) ?? [])
     }
-    setFailure(null); setArtworks(null); setReady(false); setRoomIndex(0); setVisit(0); setPhase('idle'); setAttempt((value) => value + 1)
+    setFailure(null); setArtworks(null); setArtist(null); setReady(false); setRoomIndex(0); setVisit(0); setPhase('idle'); setAttempt((value) => value + 1)
   }
 
   useEffect(() => {
@@ -96,8 +101,8 @@ export default function App() {
       }
     }
     void Promise.all([
-      loadArtworks(abort.signal), check('models/munal_gallery_daylight.glb'), check('textures/munal_daylight_lightmap.png'),
-    ]).then(([data]) => { if (!abort.signal.aborted) setArtworks(data) })
+      loadArtworks(abort.signal), loadArtistProfile(abort.signal), check('models/munal_gallery_daylight.glb'), check('models/casita-madriguera.glb'), check('textures/munal_daylight_lightmap.png'),
+    ]).then(([data, profile]) => { if (!abort.signal.aborted) { setArtworks(data); setArtist(profile) } })
       .catch((error: unknown) => {
         if (!abort.signal.aborted) onSceneError(error instanceof Error ? error : new Error(String(error)))
       })
@@ -123,14 +128,14 @@ export default function App() {
 
   return <main className="gallery-app">
     <div className="gallery-canvas" aria-label="Sala virtual del MUNAL">
-      {artworks && !failure && <SceneBoundary key={attempt} onError={onSceneError}>
+      {artworks && artist && !failure && <SceneBoundary key={attempt} onError={onSceneError}>
         <Canvas dpr={[1, 1.5]} camera={{ position: [0, 1.65, 0], fov: 65, near: 0.05, far: 100 }}
           gl={{ antialias: false, powerPreference: 'high-performance', toneMapping: ACESFilmicToneMapping,
             toneMappingExposure: 1, outputColorSpace: SRGBColorSpace }}
           fallback={<p role="alert">WebGL no está disponible. Activa la aceleración gráfica.</p>}>
           <color attach="background" args={['#101a16']} />
           <Suspense fallback={null}>
-            <GalleryScene artworks={artworks} room={rooms[roomIndex]} visit={visit} direction={arrivalDirection}
+            <GalleryScene artworks={artworks} artist={artist} room={rooms[roomIndex]} visit={visit} direction={arrivalDirection}
               audioConfig={audioConfig} onReady={onReady} onDoor={onDoor}
               onLockChange={setLocked} onAudioError={onAudioError} />
           </Suspense>

@@ -8,8 +8,8 @@ import { computeAdaptiveArtworkLayout } from './wallLayout.ts'
 /** Copias propias: ni materiales ni texturas de la caché de useGLTF/useTexture se mutan. */
 export function prepareGallery(source: Object3D, sourceLightmap: Texture,
   artworks: readonly ArtworkData[], images: readonly Texture[], palette: { wall: string; partition: string } = ROOM_PALETTES[0]) {
-  const scene = new Group()
-  scene.add(source.clone(true))
+    const scene = new Group()
+    scene.add(source.clone(true))
   const materials = new Set<Material>()
   const textures = new Set<Texture>()
   const geometries = new Set<BufferGeometry>()
@@ -44,7 +44,10 @@ export function prepareGallery(source: Object3D, sourceLightmap: Texture,
       if ((match || frameMatch) && index >= 0) {
         object.visible = true
         const plane = scene.getObjectByName(`Artwork_${String(Number(slot) + 1).padStart(2, '0')}`) as Mesh
-        const sourceGeometry = object.geometry
+        const sourceGeometry = object.geometry.clone()
+        const artwork = index >= 0 ? artworks[index] : null
+        const diptychMate = artwork?.id === 'obra-03-b'
+        if (diptychMate) sourceGeometry.scale(-1, 1, 1)
         sourceGeometry.computeBoundingBox()
         const center = sourceGeometry.boundingBox!.getCenter(new Vector3())
         const size = sourceGeometry.boundingBox!.getSize(new Vector3())
@@ -53,7 +56,12 @@ export function prepareGallery(source: Object3D, sourceLightmap: Texture,
         const height = Number(plane.userData.display_height ?? 1.2)
         const aspect = image?.width && image?.height ? image.width / image.height : width / height
         const fit = computeAdaptiveArtworkLayout(Number(slot), center, size, aspect, width, height)
-        object.geometry = sourceGeometry.clone().translate(-center.x, -center.y, -center.z)
+        const isPair = artworks.some((item) => item.id === 'obra-03') && diptychMate
+        if (isPair) fit.targetCenter.set(-3.98, 1.65, -5.05)
+        else if (artwork?.id === 'obra-03' && artworks.some((item) => item.id === 'obra-03-b')) {
+          fit.targetCenter.set(-3.98, 1.65, -3.75)
+        }
+        object.geometry = sourceGeometry.translate(-center.x, -center.y, -center.z)
           .scale(fit.scale.x, fit.scale.y, fit.scale.z).translate(fit.targetCenter.x, fit.targetCenter.y, fit.targetCenter.z)
         geometries.add(object.geometry)
       }

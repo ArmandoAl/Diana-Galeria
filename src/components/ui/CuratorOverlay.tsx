@@ -37,8 +37,10 @@ export function CuratorOverlay({
 }: CuratorOverlayProps) {
   const artwork = useGalleryStore((state) => state.activeArtwork)
   const inspecting = useGalleryStore((state) => state.isInspecting)
+  const housePhotosOpen = useGalleryStore((state) => state.isHousePhotosOpen)
+  const isNearHouse = useGalleryStore((state) => state.isNearHouse)
   const isExploring = useGalleryStore((state) => state.isExploring)
-  const near = useGalleryStore((state) => state.isNearArtwork)
+  const near = useGalleryStore((state) => state.isNearArtwork) || isNearHouse
   const door = useGalleryStore((state) => state.nearbyDoor)
   const close = useGalleryStore((state) => state.closeArtworkModal)
 
@@ -51,6 +53,8 @@ export function CuratorOverlay({
   const [showTutorial, setShowTutorial] = useState(false)
   const [showDesktopTutorial, setShowDesktopTutorial] = useState(false)
   const dialog = useRef<HTMLDialogElement>(null)
+  const houseDialog = useRef<HTMLDialogElement>(null)
+  const [housePhotoIndex, setHousePhotoIndex] = useState(0)
   const enter = useRef<HTMLButtonElement>(null)
   const special = artwork?.isSpecial === true
 
@@ -66,6 +70,12 @@ export function CuratorOverlay({
     if (artwork && inspecting && element && !element.open) element.showModal()
     return () => element?.close()
   }, [artwork, inspecting])
+
+  useEffect(() => {
+    const element = houseDialog.current
+    if (housePhotosOpen && element && !element.open) element.showModal()
+    return () => element?.close()
+  }, [housePhotosOpen])
 
   const handleEnterClick = useCallback(() => {
     useGalleryStore.getState().setIsExploring(true)
@@ -339,7 +349,9 @@ export function CuratorOverlay({
               {door ? (
                 <><kbd>E</kbd> / <kbd>F</kbd> o clic · {door === 1 ? 'Siguiente sala' : 'Sala anterior'}</>
               ) : near ? (
-                <>Presiona <kbd>[E]</kbd> o haz clic para contemplar</>
+                isNearHouse
+                  ? <>Presiona <kbd>[E]</kbd> o haz clic para ver la casita</>
+                  : <>Presiona <kbd>[E]</kbd> o haz clic para contemplar</>
               ) : null}
             </p>
           )}
@@ -443,6 +455,49 @@ export function CuratorOverlay({
                 >
                   Continuar recorrido
                 </button>
+              </footer>
+            </div>
+          </article>
+        )}
+      </dialog>
+
+      <dialog
+        ref={houseDialog}
+        className={styles.dialog}
+        aria-labelledby="house-title"
+        onCancel={handleCloseArtwork}
+        onClose={() => {
+          if (houseDialog.current?.open) return
+          handleCloseArtwork()
+        }}
+      >
+        {housePhotosOpen && (
+          <article>
+            <div className={styles.panelHeader}>
+              <p className={styles.eyebrow}>Proyecto universitario · pieza de madera</p>
+              <button type="button" className={styles.closeButton} aria-label="Cerrar fotografías y continuar el recorrido" onClick={handleCloseArtwork}>
+                <span aria-hidden="true">×</span>
+              </button>
+            </div>
+            <h2 id="house-title">La madriguera</h2>
+            <img
+              className={styles.artwork}
+              src={`${import.meta.env.BASE_URL}casita-galeria/${String(housePhotoIndex + 1).padStart(2, '0')}.jpg`}
+              alt={`Fotografía ${housePhotoIndex + 1} de la casita pintada`}
+            />
+            <div className={styles.panelBody}>
+              <footer className={styles.panelFooter}>
+                <button type="button" className={styles.quietButton} onClick={() => setHousePhotoIndex((index) => (index + 5) % 6)}>
+                  Foto anterior
+                </button>
+                <span className={styles.caption}>{housePhotoIndex + 1} / 6</span>
+                <button type="button" className={styles.quietButton} onClick={() => setHousePhotoIndex((index) => (index + 1) % 6)}>
+                  Siguiente foto
+                </button>
+              </footer>
+              <footer className={styles.panelFooter}>
+                <span className={styles.caption}>Fotografías originales de la pieza.</span>
+                <button type="button" className={styles.goldButton} onClick={handleCloseArtwork}>Continuar recorrido</button>
               </footer>
             </div>
           </article>

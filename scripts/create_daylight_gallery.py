@@ -73,6 +73,11 @@ def main():
     links.new(texture.outputs['Color'], emission.inputs['Color'])
     links.new(emission.outputs[0], nodes.get('Material Output').inputs['Surface'])
     architecture, panes, backdrops, doors = [room], [], [], []
+    # Cubre el encuentro inferior donde las dos mamparas tocan los muros laterales.
+    corner_caps = [box('Zocalo_Remate_Esquina_1', (-3.85,-3.4,.12), (.32,.32,.24), collection, wood),
+                   box('Zocalo_Remate_Esquina_2', (3.85,3.4,.12), (.32,.32,.24), collection, wood)]
+    for cap in corner_caps:
+        exhibition.planar_uv(cap)
 
     def part(name, center, size, mat, target):
         obj = box(name, center, size, collection, mat)
@@ -187,10 +192,10 @@ def main():
         mat.node_tree.nodes['Principled BSDF'].inputs['Base Color'].default_value = (.3,.3,.3,1)
     for obj in panes+art_objects:
         obj.hide_render = True
-    meshes = [room,collider,*doors,*panes,*backdrops,*art_objects]
-    baked = [room,*doors]
+    meshes = [room,collider,*doors,*panes,*backdrops,*art_objects,*corner_caps]
+    baked = [room,*doors,*corner_caps]
     expected = sum(len({p.material_index for p in obj.data.polygons}) for obj in baked)
-    pipeline.bake(scene_name=scene.name,bake_objects=baked,expected_modules=3,
+    pipeline.bake(scene_name=scene.name,bake_objects=baked,expected_modules=5,
                   collider_name=collider.name,export_objects=meshes,
                   expected_uv_primitives=expected,lighting=lambda scene: None)
     for mat,rgb in [(green,(135/255,151/255,128/255)),(partition,(75/255,96/255,75/255))]:

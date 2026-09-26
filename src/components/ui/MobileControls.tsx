@@ -6,6 +6,7 @@ const JOYSTICK_RADIUS = 46
 
 export function MobileControls() {
   const nearArtwork = useGalleryStore((state) => state.isNearArtwork)
+  const nearHouse = useGalleryStore((state) => state.isNearHouse)
   const nearbyDoor = useGalleryStore((state) => state.nearbyDoor)
   const touchRunning = useGalleryStore((state) => state.touchRunning)
   const setTouchRunning = useGalleryStore((state) => state.setTouchRunning)
@@ -109,7 +110,7 @@ export function MobileControls() {
     lookPointerId.current = null
   }, [])
 
-  const showActionButton = nearArtwork || nearbyDoor !== null
+  const showActionButton = nearArtwork || nearHouse || nearbyDoor !== null
 
   return (
     <div className={styles.mobileLayer} aria-label="Controles de navegación táctil">
@@ -130,17 +131,17 @@ export function MobileControls() {
             type="button"
             className={styles.centerActionButton}
             onClick={triggerInteraction}
-            aria-label={nearbyDoor ? 'Cruzar a la siguiente sala' : 'Examinar obra de arte'}
+            aria-label={nearbyDoor ? 'Cruzar a la siguiente sala' : nearHouse ? 'Ver fotografías de la casita' : 'Examinar obra de arte'}
           >
             <span className={styles.actionIcon} aria-hidden="true">
-              {nearbyDoor ? '🚪' : '👁️'}
+              {nearbyDoor ? '🚪' : nearHouse ? '🏠' : '👁️'}
             </span>
             <span className={styles.actionLabel}>
               {nearbyDoor
                 ? nearbyDoor === 1
                   ? 'Siguiente sala'
                   : 'Sala anterior'
-                : 'Examinar obra'}
+                : nearHouse ? 'Ver casita' : 'Examinar obra'}
             </span>
           </button>
         </div>

@@ -1,6 +1,6 @@
 import type { ArtworkData } from '../types/gallery.ts'
 
-export const ROOM_CAPACITY = 6
+export const ROOM_CAPACITY = 7
 export const MAX_ROOM_CAPACITY = 14
 export const ROOM_PALETTES = [
   { name: 'Verde salvia', wall: '#879780', partition: '#4b604b' },

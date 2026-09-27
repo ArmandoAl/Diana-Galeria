@@ -238,5 +238,70 @@
     "description": "Ficha provisional de la obra 19. Sustituir por el texto curatorial aprobado antes de publicar.",
     "imagePath": "/artworks/19.jpg",
     "isSpecial": false
+  },
+  {
+    "id": "stone-cuando-el-rio",
+    "slotIndex": 20,
+    "title": "Cuando el río suena, agua lleva",
+    "artist": "Diana Carranza Lucatero",
+    "year": "2025",
+    "technique": "Óleo sobre madera",
+    "dimensions": "43.3 × 31 cm",
+    "description": "Sobre la superficie de un tronco se despliega la memoria viva de una herida ancestral: la humillación, una de las heridas más invisibles y silenciadas de la infancia. Esta herida nace cuando el ser es expuesto, invalidado o ridiculizado en sus primeras formas de expresión. Cuando mostrar la emoción, el cuerpo o la necesidad se convierte en motivo de vergüenza. Es una herida que enseña a esconderse para sobrevivir. La figura humana que habita la pieza está cubierta de flores, no como adorno, sino como camuflaje emocional. Las flores representan la belleza que se aprende a usar como escudo, como una forma de tapar lo que duele. El gesto de ocultarse habla de la voz silenciada, del cuerpo que aprendió a minimizarse por miedo al juicio o la exposición. Desde sus lágrimas brota un conejo, símbolo de la fragilidad heredada, de los traumas que no comenzaron en uno mismo, sino que fueron transmitidos desde otras generaciones. El conejo, siempre alerta, siempre listo para huir, encarna esa sensibilidad hipervigilante que dejan las heridas no reconocidas.",
+    "imagePath": "/artworks/Stone_Room/stone1.jpg",
+    "isSpecial": false,
+    "collection": "Stone_Room"
+  },
+  {
+    "id": "stone-el-que-se-fue",
+    "slotIndex": 21,
+    "title": "El que se fue de la villa, perdió su silla",
+    "artist": "Diana Carranza Lucatero",
+    "year": "2025",
+    "technique": "Óleo sobre madera",
+    "dimensions": "50 × 62 cm",
+    "description": "Se presenta un círculo de sillas con un conejo sentado en una de ellas creando una atmósfera tranquila pero intrigante. Las sillas simbolizan el ciclo repetitivo de la vida, un patrón constante que parece no tener fin mientras que el conejo con su presencia serena representa las constelaciones familiares, esos lazos invisibles que nos vinculan y nos condicionan a repetir patrones heredados de generaciones anteriores. El círculo, en su forma cerrada refuerza la idea de lo cíclico y lo eterno donde el pasado y el presente se entrelazan sin posibilidad de escape, como una rueda que gira constantemente.",
+    "imagePath": "/artworks/Stone_Room/stone2.jpg",
+    "isSpecial": false,
+    "collection": "Stone_Room"
+  },
+  {
+    "id": "stone-con-familia",
+    "slotIndex": 22,
+    "title": "Con ‘familia’ así, ¿para qué quiero enemigos?",
+    "artist": "Diana Carranza Lucatero",
+    "year": "2025",
+    "technique": "Óleo sobre madera",
+    "dimensions": "43.3 × 36 cm",
+    "description": "La herida de la traición surge cuando se rompe la confianza, especialmente en la infancia, cuando creemos ciegamente en quienes amamos. Pinté un conejo siendo enredado por una serpiente para representar esa pérdida de inocencia. El conejo, símbolo de vulnerabilidad y entrega, se ve atrapado por la serpiente: figura de engaño, manipulación y promesas rotas. Esta imagen habla del momento en que el cuidado se convierte en control, y la protección en amenaza. La traición nos deja una marca invisible, el miedo constante a confiar, la necesidad de tener el control para no volver a ser lastimados. Esta obra retrata esa lucha interna entre la ternura que permanece y la desconfianza que nace.",
+    "imagePath": "/artworks/Stone_Room/stone3.jpg",
+    "isSpecial": false,
+    "collection": "Stone_Room"
+  },
+  {
+    "id": "stone-mas-vale-solo",
+    "slotIndex": 23,
+    "title": "Más vale solo que mal acompañado",
+    "artist": "Diana Carranza Lucatero",
+    "year": "2025",
+    "technique": "Óleo sobre madera",
+    "dimensions": "43.3 × 33 cm",
+    "description": "El rechazo es una de las heridas más profundas que puede marcar la infancia. No se trata solo de sentirse excluido por otros, sino de rechazarse a uno mismo. Cuando en los primeros años de vida no somos aceptados por quienes más necesitamos —padres, cuidadores, figuras cercanas—, se instala una sensación de no ser dignos de amor ni pertenencia. Esta herida nos acompaña, silenciosa, y muchas veces nos lleva a construir una identidad desde la negación de lo que somos. El rechazo, entonces, no solo duele por venir de fuera, sino porque se vuelve interno: una voz que repite que no merecemos ser vistos, escuchados ni amados.",
+    "imagePath": "/artworks/Stone_Room/stone4.jpg",
+    "isSpecial": false,
+    "collection": "Stone_Room"
+  },
+  {
+    "id": "stone-cuando-tu-vas",
+    "slotIndex": 24,
+    "title": "Cuando tú vas, yo ya fui y vine tres veces",
+    "artist": "Diana Carranza Lucatero",
+    "year": "2025",
+    "technique": "Óleo sobre madera",
+    "dimensions": "43.3 × 31 cm",
+    "description": "La herida del abandono nace cuando quienes deberían cuidarnos no están física o emocionalmente. En la infancia esta ausencia se vive como una ruptura con el mundo, una sensación de vacío que se llena con miedo y soledad. Pinté unos zapatos como símbolo de esa ausencia: alguien que se fue, que no estuvo, que dejó huellas pero no presencia. Los zapatos vacíos hablan de una espera eterna, de pasos que no volvieron. Esta herida nos deja buscando refugio en todas partes, temiendo cada despedida. El abandono no siempre grita; a veces se instala en lo cotidiano.",
+    "imagePath": "/artworks/Stone_Room/stone5.jpg",
+    "isSpecial": false,
+    "collection": "Stone_Room"
   }
 ]

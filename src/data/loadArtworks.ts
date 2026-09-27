@@ -28,8 +28,11 @@ export function parseArtworks(value: unknown): readonly ArtworkData[] {
     if (typeof isSpecial !== 'boolean') {
       throw new Error('isSpecial debe ser booleano.')
     }
-    if (typeof imagePath !== 'string' || !/^\/artworks\/[\w-]+\.(?:jpe?g|png|webp|avif)$/i.test(imagePath)) {
+    if (typeof imagePath !== 'string' || !/^\/artworks\/(?:[\w-]+\/)*[\w-]+\.(?:jpe?g|png|webp|avif)$/i.test(imagePath)) {
       throw new Error('imagePath debe señalar una imagen local dentro de /artworks/.')
+    }
+    if (item.collection !== undefined && item.collection !== 'Stone_Room') {
+      throw new Error('collection solo puede ser Stone_Room.')
     }
     ids.add(id)
     slots.add(slotIndex)

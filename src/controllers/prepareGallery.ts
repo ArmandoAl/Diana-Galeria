@@ -19,8 +19,8 @@ export function prepareGallery(source: Object3D, sourceLightmap: Texture,
     for (const geometry of geometries) { disposeBoundsTree.call(geometry); geometry.dispose() }
   }
   try {
-    if (!artworks.length || artworks.length > MAX_ROOM_CAPACITY || images.length !== artworks.length) {
-      throw new Error('Cada sala requiere entre 1 y 14 obras, con una imagen por obra.')
+    if (artworks.length > MAX_ROOM_CAPACITY || images.length !== artworks.length) {
+      throw new Error('Cada sala admite hasta 14 obras, con una imagen por obra.')
     }
     if (new Set(artworks.map((artwork) => artwork.slotIndex)).size !== artworks.length
       || artworks.some((artwork) => !Number.isInteger(artwork.slotIndex) || artwork.slotIndex < 0 || artwork.slotIndex >= MAX_ROOM_CAPACITY)) {

@@ -2,20 +2,60 @@
   "artist": {
     "name": "Diana Carranza Lucatero",
     "location": "Ensenada, Baja California, México",
-    "education": "Licenciatura en Artes Plásticas, Universidad Autónoma de Baja California",
-    "biography": "Originaria de Baja California, Diana Carranza Lucatero estudia la Licenciatura en Artes Plásticas en la Universidad Autónoma de Baja California. Ha participado en exposiciones colectivas en Galería Antesala, CEART Ensenada, Galería Petanca, La Perlita Galería y la Colección Elías Fontes. Su trabajo aborda el hogar, la identidad y los vínculos familiares desde una mirada íntima y simbólica.",
+    "email": "diana.carranza.lucatero@uabc.edu.mx",
+    "phone": "646 259 3228",
+    "education": "Licenciatura en Artes Plásticas, Universidad Autónoma de Baja California (UABC)",
+    "biography": "Originaria de Baja California, México. Actualmente curso la Licenciatura en Artes Plásticas en la Universidad Autónoma de Baja California (UABC). Mi formación me ha enriquecido a través de la participación en exposiciones colectivas en espacios como la Galería Antesala, el CEART Ensenada, Galería Petanca, La Perlita Galería y la Colección Elías Fontes. Mi trabajo artístico se centra en la exploración del hogar, la identidad y los vínculos familiares, abordando estos temas desde una mirada íntima y simbólica.",
     "statement": "Mi práctica artística se centra en los vínculos invisibles que configuran nuestra identidad: la memoria, la herencia y las cicatrices emocionales transmitidas a través de las generaciones. Mediante pintura al óleo sobre madera, combino símbolos íntimos para explorar cómo las estructuras familiares moldean nuestro modo de habitar el mundo.\n\nEn este cuerpo de trabajo, investigo el hogar como una construcción emocional. Las obras actúan como umbrales: invitan al espectador a reconocer sus propias heridas y memorias ancestrales. Creo que el arte no solo revela, sino que también repara, ofreciendo posibilidades de transformación allí donde el lenguaje no alcanza.\n\nEn un presente marcado por la urgencia de sanar y reconfigurar los lazos familiares, mi propuesta busca generar una experiencia sensible que dialogue con lo personal.",
     "project": {
       "title": "Todo lo que siento",
       "year": "2025",
       "technique": "Óleo sobre madera",
-      "description": "Este proyecto explora los vínculos familiares como la primera casa emocional que habitamos. La madera simboliza las raíces y el paso del tiempo; los símbolos hablan de las herencias afectivas que moldean nuestra identidad. Desde el reconocimiento y la sanación, la obra busca resignificar el dolor y reconstruir lo dañado."
+      "description": "Este proyecto artístico explora los vínculos familiares como la primera casa emocional que habitamos, a través de pintura al óleo sobre madera integro símbolos que representan las herencias afectivas que moldean nuestra identidad. Me interesa retratar cómo el conocimiento de estos legados emocionales puede liberar a una persona de patrones repetitivos y abrir el camino hacia la construcción de un hogar interno más pleno. La madera como material orgánico, simboliza las raíces familiares y el paso del tiempo, desde una mirada de reconocimiento y sanación, planteo el arte como herramienta sensible para resignificar el dolor y reconstruir lo dañado. En un contexto donde las dinámicas familiares siguen marcando profundamente nuestras vidas, esta obra dialoga con la urgencia de sanar las heridas invisibles que aún se transmiten de generación en generación."
     },
     "exhibitions": [
-      { "year": "2025", "locations": "Ensenada y Mexicali, Baja California" },
+      { "year": "2025", "locations": "Ensenada, Baja California · Mexicali, Baja California" },
       { "year": "2024", "locations": "Ensenada, Baja California" }
     ]
   },
+  "projectWorks": [
+    {
+      "title": "Cuando el río suena, agua lleva",
+      "dimensions": "43.3 × 31 cm",
+      "technique": "Óleo sobre madera",
+      "description": "Sobre la superficie de un tronco se despliega la memoria viva de una herida ancestral: la humillación, una de las heridas más invisibles y silenciadas de la infancia. Esta herida nace cuando el ser es expuesto, invalidado o ridiculizado en sus primeras formas de expresión. Cuando mostrar la emoción, el cuerpo o la necesidad se convierte en motivo de vergüenza. Es una herida que enseña a esconderse para sobrevivir. La figura humana que habita la pieza está cubierta de flores, no como adorno, sino como camuflaje emocional. Las flores representan la belleza que se aprende a usar como escudo, como una forma de tapar lo que duele. El gesto de ocultarse habla de la voz silenciada, del cuerpo que aprendió a minimizarse por miedo al juicio o la exposición. Desde sus lágrimas brota un conejo, símbolo de la fragilidad heredada, de los traumas que no comenzaron en uno mismo, sino que fueron transmitidos desde otras generaciones. El conejo, siempre alerta, siempre listo para huir, encarna esa sensibilidad hipervigilante que dejan las heridas no reconocidas."
+    },
+    {
+      "title": "El que se fue de la villa, perdió su silla",
+      "dimensions": "50 × 62 cm",
+      "technique": "Óleo sobre madera",
+      "description": "Se presenta un círculo de sillas con un conejo sentado en una de ellas creando una atmósfera tranquila pero intrigante. Las sillas simbolizan el ciclo repetitivo de la vida, un patrón constante que parece no tener fin mientras que el conejo con su presencia serena representa las constelaciones familiares, esos lazos invisibles que nos vinculan y nos condicionan a repetir patrones heredados de generaciones anteriores. El círculo, en su forma cerrada, refuerza la idea de lo cíclico y lo eterno donde el pasado y el presente se entrelazan sin posibilidad de escape, como una rueda que gira constantemente."
+    },
+    {
+      "title": "Más vale solo que mal acompañado",
+      "dimensions": "43.3 × 33 cm",
+      "technique": "Óleo sobre madera",
+      "description": "El rechazo es una de las heridas más profundas que puede marcar la infancia. No se trata solo de sentirse excluido por otros, sino de rechazarse a uno mismo. Cuando en los primeros años de vida no somos aceptados por quienes más necesitamos —padres, cuidadores, figuras cercanas—, se instala una sensación de no ser dignos de amor ni pertenencia. Esta herida nos acompaña, silenciosa, y muchas veces nos lleva a construir una identidad desde la negación de lo que somos. El rechazo, entonces, no solo duele por venir de fuera, sino porque se vuelve interno: una voz que repite que no merecemos ser vistos, escuchados ni amados."
+    },
+    {
+      "title": "Cuando tú vas, yo ya fui y vine tres veces",
+      "dimensions": "43.3 × 31 cm",
+      "technique": "Óleo sobre madera",
+      "description": "La herida del abandono nace cuando quienes deberían cuidarnos no están física o emocionalmente. En la infancia esta ausencia se vive como una ruptura con el mundo, una sensación de vacío que se llena con miedo y soledad. Pinté unos zapatos como símbolo de esa ausencia: alguien que se fue, que no estuvo, que dejó huellas pero no presencia. Los zapatos vacíos hablan de una espera eterna, de pasos que no volvieron. Esta herida nos deja buscando refugio en todas partes, temiendo cada despedida. El abandono no siempre grita; a veces se instala en lo cotidiano."
+    },
+    {
+      "title": "Con ‘familia’ así, ¿para qué quiero enemigos?",
+      "dimensions": "43.3 × 36 cm",
+      "technique": "Óleo sobre madera",
+      "description": "La herida de la traición surge cuando se rompe la confianza, especialmente en la infancia, cuando creemos ciegamente en quienes amamos. Pinté un conejo siendo enredado por una serpiente para representar esa pérdida de inocencia. El conejo, símbolo de vulnerabilidad y entrega, se ve atrapado por la serpiente: figura de engaño, manipulación y promesas rotas. Esta imagen habla del momento en que el cuidado se convierte en control, y la protección en amenaza. La traición nos deja una marca invisible, el miedo constante a confiar, la necesidad de tener el control para no volver a ser lastimados. Esta obra retrata esa lucha interna entre la ternura que permanece y la desconfianza que nace."
+    },
+    {
+      "title": "Astillas en la piel",
+      "dimensions": "58 × 49 × 56 cm",
+      "technique": "Óleo sobre madera",
+      "description": "Esta obra forma parte de la serie Todo lo que siento. En ella representó una casa como símbolo de la familia, donde cada muro pertenece a un miembro distinto. Dentro de cada espacio hay un conejo que funciona como símbolo del vínculo familiar y de la herencia emocional. El conejo representa lo que se transmite de generación en generación, a veces sin cuestionarlo, repitiendo patrones que solo se rompen cuando alguien decide sanar. Astillas en la piel habla de cómo lo heredado puede doler, marcar, pero también abrir la posibilidad de transformación y de reconstruir desde otro lugar."
+    }
+  ],
   "visualStyle": {
     "palette": ["#F5F1EA", "#171613", "#9B8068"],
     "typography": "Titulares editoriales en serif de alto contraste; cuerpo sobrio y legible.",
@@ -24,25 +64,28 @@
   },
   "galleryCards": [
     {
-      "roomIndex": 0,
       "imagePath": "/author/author2.jpg",
-      "eyebrow": "La artista",
+      "eyebrow": "Perfil · Ensenada, Baja California",
       "title": "Diana Carranza Lucatero",
-      "text": "Artista visual originaria de Baja California y estudiante de Artes Plásticas en la UABC. Su trabajo explora el hogar, la identidad y los vínculos familiares desde una mirada íntima y simbólica."
+      "text": "Originaria de Baja California, México. Actualmente curso la Licenciatura en Artes Plásticas en la Universidad Autónoma de Baja California (UABC). Mi formación me ha enriquecido a través de la participación en exposiciones colectivas en espacios como la Galería Antesala, el CEART Ensenada, Galería Petanca, La Perlita Galería y la Colección Elías Fontes. Mi trabajo artístico se centra en la exploración del hogar, la identidad y los vínculos familiares, abordando estos temas desde una mirada íntima y simbólica.\n\nCorreo institucional: diana.carranza.lucatero@uabc.edu.mx\nTeléfono: 646 259 3228"
     },
     {
-      "roomIndex": 1,
       "imagePath": "/author/author6.png",
       "eyebrow": "Declaración de artista",
-      "title": "Memoria y herencia",
-      "text": "A través del óleo sobre madera, Diana reúne símbolos íntimos para hablar de las memorias y heridas que pasan entre generaciones. El hogar aparece como una construcción emocional y el arte como posibilidad de reconocer y transformar lo heredado."
+      "title": "Memoria, herencia y hogar",
+      "text": "Mi práctica artística se centra en los vínculos invisibles que configuran nuestra identidad: la memoria, la herencia y las cicatrices emocionales transmitidas a través de las generaciones. Mediante pintura al óleo sobre madera, combino símbolos íntimos para explorar cómo las estructuras familiares moldean nuestro modo de habitar el mundo.\n\nEn este cuerpo de trabajo, investigo el hogar como una construcción emocional. Las obras actúan como umbrales: invitan al espectador a reconocer sus propias heridas y memorias ancestrales. Creo que el arte no solo revela, sino que también repara, ofreciendo posibilidades de transformación allí donde el lenguaje no alcanza.\n\nEn un presente marcado por la urgencia de sanar y reconfigurar los lazos familiares, mi propuesta busca generar una experiencia sensible que dialogue con lo personal."
     },
     {
-      "roomIndex": 2,
       "imagePath": "/author/author5.png",
       "eyebrow": "Proyecto · 2025",
       "title": "Todo lo que siento",
-      "text": "La serie mira los vínculos familiares como la primera casa emocional. La madera evoca las raíces y el tiempo; sus símbolos buscan resignificar el dolor y abrir espacio para sanar y reconstruir."
+      "text": "Este proyecto artístico explora los vínculos familiares como la primera casa emocional que habitamos, a través de pintura al óleo sobre madera integro símbolos que representan las herencias afectivas que moldean nuestra identidad. Me interesa retratar cómo el conocimiento de estos legados emocionales puede liberar a una persona de patrones repetitivos y abrir el camino hacia la construcción de un hogar interno más pleno. La madera como material orgánico, simboliza las raíces familiares y el paso del tiempo, desde una mirada de reconocimiento y sanación, planteo el arte como herramienta sensible para resignificar el dolor y reconstruir lo dañado. En un contexto donde las dinámicas familiares siguen marcando profundamente nuestras vidas, esta obra dialoga con la urgencia de sanar las heridas invisibles que aún se transmiten de generación en generación."
+    },
+    {
+      "imagePath": "/author/author4.jpg",
+      "eyebrow": "Exposiciones colectivas",
+      "title": "Ensenada · Mexicali",
+      "text": "2025 · Ensenada, Baja California y Mexicali, Baja California.\n\n2024 · Ensenada, Baja California.\n\nEspacios de exposición: Galería Antesala, CEART Ensenada, Galería Petanca, La Perlita Galería y Colección Elías Fontes.\n\nFormación: Licenciatura en Artes Plásticas, Universidad Autónoma de Baja California."
     }
   ]
 }

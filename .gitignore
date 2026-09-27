@@ -31,3 +31,4 @@ __pycache__/
 *.exr
 .vercel
 public/author/*.pdf
+public/artworks/Stone_Room/*.png

@@ -13,6 +13,7 @@ export interface ArtworkData {
   readonly description: string
   readonly imagePath: string
   readonly isSpecial: boolean
+  readonly collection?: 'Stone_Room'
 }
 
 /** Estado mutable del motor FPS; metros y metros/segundo, coordenadas Three.js. */

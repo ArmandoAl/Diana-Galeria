@@ -4,3 +4,4 @@ node_modules
 dist
 assets
 public/author/*.pdf
+public/artworks/Stone_Room/*.png

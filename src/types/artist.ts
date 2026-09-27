@@ -1,5 +1,4 @@
 export interface ArtistGalleryCard {
-  readonly roomIndex: number
   readonly imagePath: string
   readonly eyebrow: string
   readonly title: string
@@ -10,6 +9,8 @@ export interface ArtistProfile {
   readonly artist: {
     readonly name: string
     readonly location: string
+    readonly email: string
+    readonly phone: string
     readonly education: string
     readonly biography: string
     readonly statement: string
@@ -21,5 +22,11 @@ export interface ArtistProfile {
     }
     readonly exhibitions: readonly { readonly year: string; readonly locations: string }[]
   }
+  readonly projectWorks: readonly {
+    readonly title: string
+    readonly dimensions: string
+    readonly technique: string
+    readonly description: string
+  }[]
   readonly galleryCards: readonly ArtistGalleryCard[]
 }

@@ -4,9 +4,11 @@ import { useGalleryStore } from '../../stores/useGalleryStore.ts'
 import { MobileControls } from './MobileControls.tsx'
 import { TouchTutorialOverlay } from './TouchTutorialOverlay.tsx'
 import { DesktopTutorialOverlay } from './DesktopTutorialOverlay.tsx'
+import type { ArtistProfile } from '../../types/artist.ts'
 import styles from './CuratorOverlay.module.css'
 
 export interface CuratorOverlayProps {
+  artist?: ArtistProfile | null
   ready: boolean
   locked: boolean
   failure?: Error | null
@@ -22,6 +24,7 @@ export interface CuratorOverlayProps {
 }
 
 export function CuratorOverlay({
+  artist,
   ready,
   locked,
   failure,
@@ -57,6 +60,7 @@ export function CuratorOverlay({
   const [housePhotoIndex, setHousePhotoIndex] = useState(0)
   const enter = useRef<HTMLButtonElement>(null)
   const special = artwork?.isSpecial === true
+  const astillas = artist?.projectWorks.find((work) => work.title === 'Astillas en la piel')
 
   const { progress } = useProgress()
   const roundedProgress = Math.min(100, Math.round(progress))
@@ -485,6 +489,17 @@ export function CuratorOverlay({
               src={`${import.meta.env.BASE_URL}casita-galeria/${String(housePhotoIndex + 1).padStart(2, '0')}.jpg`}
               alt={`Fotografía ${housePhotoIndex + 1} de la casita pintada`}
             />
+            {astillas && (
+              <div className={styles.panelBody}>
+                <h3>Astillas en la piel · 2025</h3>
+                <dl className={styles.metadata}>
+                  <div><dt>Autora</dt><dd>Diana Carranza Lucatero</dd></div>
+                  <div><dt>Técnica</dt><dd>{astillas.technique}</dd></div>
+                  <div><dt>Dimensiones</dt><dd>{astillas.dimensions}</dd></div>
+                </dl>
+                <p className={styles.description}>{astillas.description}</p>
+              </div>
+            )}
             <div className={styles.panelBody}>
               <footer className={styles.panelFooter}>
                 <button type="button" className={styles.quietButton} onClick={() => setHousePhotoIndex((index) => (index + 5) % 6)}>

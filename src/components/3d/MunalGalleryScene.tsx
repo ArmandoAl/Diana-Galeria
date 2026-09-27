@@ -2,7 +2,8 @@ import { useEffect, useRef, useState } from 'react'
 import { Environment, Lightformer, useGLTF, useTexture } from '@react-three/drei'
 import { EffectComposer, N8AO, ToneMapping } from '@react-three/postprocessing'
 import { ToneMappingMode } from 'postprocessing'
-import { CanvasTexture, DoubleSide, Mesh, MeshBasicMaterial, SRGBColorSpace } from 'three'
+import { CanvasTexture, DoubleSide, Mesh, MeshBasicMaterial, SRGBColorSpace, Vector3 } from 'three'
+import type { BufferGeometry, Texture } from 'three'
 import { prepareGallery } from '../../controllers/prepareGallery.ts'
 import { PlayerRig } from './PlayerRig.tsx'
 import { AudioManager } from '../audio/AudioManager.tsx'
@@ -26,33 +27,60 @@ interface Props {
 
 const EMPTY_ARTIST_CARDS: readonly ArtistGalleryCard[] = []
 
-function makeArtistCardTexture(card: ArtistGalleryCard, image: CanvasImageSource & { width: number; height: number }) {
+function makeArtistCardTexture(card: ArtistGalleryCard, aspect: number) {
   const canvas = document.createElement('canvas')
-  canvas.width = 900
-  canvas.height = 1200
+  canvas.width = 1200
+  canvas.height = Math.round(canvas.width / aspect)
   const context = canvas.getContext('2d')!
   context.fillStyle = '#f5f1ea'
   context.fillRect(0, 0, canvas.width, canvas.height)
-  const crop = Math.min(image.width, image.height * 2.15)
-  context.drawImage(image, (image.width - crop) / 2, (image.height - crop / 2.15) / 2, crop, crop / 2.15, 48, 42, 804, 375)
+  context.fillStyle = '#9b8068'
+  context.fillRect(64, 70, canvas.width - 128, 2)
   context.fillStyle = '#9b8068'
   context.font = '600 24px Arial, sans-serif'
-  context.fillText(card.eyebrow.toLocaleUpperCase('es-MX'), 58, 478)
+  context.fillText(card.eyebrow.toLocaleUpperCase('es-MX'), 70, 124)
   context.fillStyle = '#171613'
-  context.font = '48px Georgia, serif'
-  const titleLines = wrap(context, card.title, 780)
-  titleLines.slice(0, 2).forEach((line, index) => context.fillText(line, 58, 540 + index * 56))
-  context.font = '26px Georgia, serif'
-  const bodyLines = wrap(context, card.text, 780)
-  bodyLines.slice(0, 9).forEach((line, index) => context.fillText(line, 58, 690 + index * 42))
+  context.font = '52px Georgia, serif'
+  const titleLines = wrap(context, card.title, canvas.width - 140)
+  titleLines.forEach((line, index) => context.fillText(line, 70, 210 + index * 60))
+  let fontSize = 32
+  let bodyLines: string[] = []
+  const bodyTop = 250 + titleLines.length * 60
+  do {
+    context.font = `${fontSize}px Georgia, serif`
+    bodyLines = card.text.split(/\n\s*\n/).flatMap((paragraph) => [...wrap(context, paragraph, canvas.width - 140), ''])
+    if (bodyLines.length * fontSize * 1.38 <= canvas.height - bodyTop - 110) break
+    fontSize -= 1
+  } while (fontSize > 21)
+  context.font = `${fontSize}px Georgia, serif`
+  const lineHeight = fontSize * 1.38
+  bodyLines.forEach((line, index) => context.fillText(line, 70, bodyTop + (index + 1) * lineHeight))
   context.fillStyle = '#9b8068'
-  context.fillRect(58, 1114, 784, 2)
+  context.fillRect(70, canvas.height - 96, canvas.width - 140, 2)
   context.font = '20px Arial, sans-serif'
-  context.fillText('DIANA CARRANZA LUCATERO', 58, 1155)
+  context.fillText('DIANA CARRANZA LUCATERO', 70, canvas.height - 56)
   const texture = new CanvasTexture(canvas)
   texture.colorSpace = SRGBColorSpace
   texture.flipY = false
   return texture
+}
+
+function fitPhotoGeometry(mesh: Mesh, aspect: number) {
+  const geometry = mesh.geometry.clone()
+  geometry.computeBoundingBox()
+  const box = geometry.boundingBox!
+  const center = box.getCenter(new Vector3())
+  const size = box.getSize(new Vector3())
+  const horizontal = size.x >= size.z ? 'x' : 'z'
+  const width = Math.max(size.x, size.z)
+  const height = size.y
+  const targetWidth = Math.min(width, height * aspect)
+  const targetHeight = Math.min(height, targetWidth / aspect)
+  const scale = targetWidth / width
+  geometry.translate(-center.x, -center.y, -center.z)
+  geometry.scale(horizontal === 'x' ? scale : 1, targetHeight / height, horizontal === 'z' ? scale : 1)
+  geometry.translate(center.x, center.y, center.z)
+  return geometry
 }
 
 function wrap(context: CanvasRenderingContext2D, text: string, width: number) {
@@ -81,45 +109,78 @@ export function MunalGalleryScene({ artworks, artist, room, visit, direction, on
   useEffect(() => {
     const selected = room.artworks.map((artwork) => images[artworks.findIndex((entry) => entry.id === artwork.id)])
     const prepared = prepareGallery(source, lightmap, room.artworks, selected, room.palette)
-    const story = artistCards.find((card) => card.roomIndex === room.index)
-    if (story) {
-      const photo = artistImages[artistCards.indexOf(story)].image as CanvasImageSource & { width: number; height: number }
-      const texture = makeArtistCardTexture(story, photo)
-      const imagePlane = prepared.scene.getObjectByName('Artwork_08') as Mesh
-      const frame = prepared.scene.getObjectByName('Frame_08') as Mesh
-      const panel = imagePlane.clone()
-      panel.geometry = imagePlane.geometry.clone()
-      const panelMaterial = new MeshBasicMaterial({ map: texture, side: DoubleSide })
-      panel.material = panelMaterial
-      panel.visible = true
-      panel.name = 'Artist_Presentation_Card'
-      panel.userData.artistCard = story
-      prepared.scene.attach(panel)
-      const panelFrame = frame.clone()
-      panelFrame.geometry = frame.geometry.clone()
-      const frameMaterial = new MeshBasicMaterial({ color: '#a7834e', side: DoubleSide })
-      panelFrame.material = frameMaterial
-      panelFrame.name = 'Artist_Presentation_Frame'
-      panelFrame.visible = true
-      prepared.scene.attach(panelFrame)
-      // dispose(): remove the card's canvas texture and copied meshes with this room instance.
+    const storyTextures: Texture[] = []
+    const storyMaterials: MeshBasicMaterial[] = []
+    const storyGeometries: BufferGeometry[] = []
+    if (room.type === 'artist') {
+      const pairs = [
+        ['Artwork_07', 'Frame_07', 'Artwork_09', 'Frame_09'],
+        ['Artwork_08', 'Frame_08', 'Artwork_10', 'Frame_10'],
+        ['Artwork_11', 'Frame_11', 'Artwork_13', 'Frame_13'],
+        ['Artwork_12', 'Frame_12', 'Artwork_14', 'Frame_14'],
+      ] as const
+      artistCards.forEach((card, index) => {
+        const [imageName, imageFrameName, textName, textFrameName] = pairs[index]
+        if (!imageName) return
+        const imagePlane = prepared.scene.getObjectByName(imageName) as Mesh
+        const imageFrame = prepared.scene.getObjectByName(imageFrameName) as Mesh
+        const textPlane = prepared.scene.getObjectByName(textName) as Mesh
+        const textFrame = prepared.scene.getObjectByName(textFrameName) as Mesh
+        const photoTexture = artistImages[index].clone()
+        photoTexture.colorSpace = SRGBColorSpace
+        photoTexture.flipY = false
+        const photo = photoTexture.image as CanvasImageSource & { width: number; height: number }
+        const textGeometry = textPlane.geometry.clone()
+        textGeometry.computeBoundingBox()
+        const textSize = textGeometry.boundingBox!.getSize(new Vector3())
+        const textTexture = makeArtistCardTexture(card, (textSize.x || textSize.z) / textSize.y)
+        storyTextures.push(photoTexture, textTexture)
+        const photoMaterial = new MeshBasicMaterial({ map: photoTexture, side: DoubleSide })
+        const textMaterial = new MeshBasicMaterial({ map: textTexture, side: DoubleSide })
+        storyMaterials.push(photoMaterial, textMaterial)
+        const photoPanel = imagePlane.clone()
+        photoPanel.geometry = fitPhotoGeometry(imagePlane, photo.width / photo.height)
+        photoPanel.material = photoMaterial
+        photoPanel.visible = true
+        photoPanel.name = `Artist_Photo_${index}`
+        photoPanel.userData.artistCard = card
+        prepared.scene.attach(photoPanel)
+        const textPanel = textPlane.clone()
+        textPanel.geometry = textGeometry
+        textPanel.material = textMaterial
+        textPanel.visible = true
+        textPanel.name = `Artist_Text_${index}`
+        prepared.scene.attach(textPanel)
+        for (const [sourceFrame, name] of [[imageFrame, `Artist_Photo_Frame_${index}`], [textFrame, `Artist_Text_Frame_${index}`]] as const) {
+          const panelFrame = sourceFrame.clone()
+          panelFrame.geometry = sourceFrame.geometry.clone()
+          const frameMaterial = new MeshBasicMaterial({ color: '#a7834e', side: DoubleSide })
+          storyMaterials.push(frameMaterial)
+          panelFrame.material = frameMaterial
+          panelFrame.name = name
+          panelFrame.visible = true
+          prepared.scene.attach(panelFrame)
+          storyGeometries.push(panelFrame.geometry)
+        }
+        storyGeometries.push(photoPanel.geometry, textPanel.geometry)
+      })
       const disposePrepared = prepared.dispose
       prepared.dispose = () => {
-        texture.dispose()
-        panel.geometry.dispose()
-        panelMaterial.dispose()
-        panelFrame.geometry.dispose()
-        frameMaterial.dispose()
+        storyTextures.forEach((texture) => texture.dispose())
+        storyMaterials.forEach((material) => material.dispose())
+        storyGeometries.forEach((geometry) => geometry.dispose())
         disposePrepared()
       }
     }
-    const house = houseSource.clone(true)
-    house.name = 'Casita_Madriguera_Interactiva'
-    house.userData.interactive_house = true
-    house.position.set(3.25, 0, 6.75)
-    house.scale.setScalar(2)
-    house.rotation.y = -Math.PI / 2
-    prepared.scene.add(house)
+    if (room.type !== 'collection') {
+      const house = houseSource.clone(true)
+      house.name = 'Casita_Madriguera_Interactiva'
+      house.userData.interactive_house = true
+      house.position.set(3.25, 0, 6.75)
+      house.scale.setScalar(2)
+      house.rotation.y = -Math.PI / 2
+      prepared.scene.add(house)
+    }
     // Recursos GPU con ciclo de vida de efecto, incluidas las remontadas de StrictMode.
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setGallery({ ...prepared, artworks: room.artworks, direction })

@@ -308,42 +308,75 @@
   inset: 0;
   overflow-y: auto;
   pointer-events: auto;
-  display: grid;
-  place-items: center;
-  padding: 7rem 1.25rem 3rem;
-  background: radial-gradient(ellipse at 50% 40%, rgba(35, 57, 47, 0.6) 0%, rgba(7, 11, 13, 0.94) 100%);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  display: flex;
+  justify-content: center;
+  background: #101813;
+  isolation: isolate;
+}
+
+.welcomePortrait {
+  position: absolute;
+  z-index: 0;
+  inset: 0 0 0 auto;
+  width: 56%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 32%;
+}
+
+.welcome::after {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  content: '';
+  pointer-events: none;
+  background: linear-gradient(90deg, #101813 0%, #101813 34%, rgba(16, 24, 19, 0.9) 47%, rgba(16, 24, 19, 0.25) 72%, rgba(16, 24, 19, 0.12) 100%),
+    linear-gradient(0deg, rgba(8, 12, 10, 0.6), transparent 35%);
 }
 
 .welcomeCard {
-  width: min(100%, 42rem);
-  text-align: center;
+  position: relative;
+  z-index: 2;
+  width: min(100%, 82rem);
+  min-height: 100%;
+  margin: 0 auto;
+  padding: clamp(7rem, 14vh, 10rem) 0 3rem;
+  text-align: left;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
+  justify-content: center;
 }
 
 .seal {
   display: inline-grid;
   place-items: center;
-  width: 4.5rem;
-  height: 4.5rem;
-  margin-bottom: 1.25rem;
+  width: 3.5rem;
+  height: 3.5rem;
+  margin-bottom: 1rem;
   border: 1px solid #d5b87666;
   border-radius: 50%;
-  font: 1.4rem Georgia, serif;
+  font: 1.15rem Georgia, serif;
   color: var(--gold);
 }
 
 .welcome h1 {
-  font: clamp(1.85rem, 4.5vw, 3.3rem) / 1.16 Georgia, 'Times New Roman', serif;
+  max-width: min(16ch, 54vw);
+  font: clamp(2.6rem, 5.4vw, 4.6rem) / 1.03 Georgia, 'Times New Roman', serif;
   text-wrap: balance;
-  margin: 0.8rem 0 1.2rem;
+  margin: 0.5rem 0 1.15rem;
+}
+
+.welcomeLead {
+  display: block;
+  margin-bottom: 0.22em;
+  font-size: 0.54em;
+  line-height: 1.2;
 }
 
 .invitation {
-  font: 1.15rem / 1.8 Georgia, serif;
+  max-width: min(35rem, 51vw);
+  font: 1.08rem / 1.7 Georgia, serif;
   color: #ded9cd;
   margin: 0 0 1rem;
 }
@@ -413,6 +446,7 @@
 }
 
 .controls {
+  max-width: 31rem;
   font-size: 0.8rem;
   line-height: 2.1;
   color: #c4c3b9;
@@ -484,14 +518,15 @@
 /* MODAL DE FICHA DE OBRA */
 .dialog {
   pointer-events: auto;
-  width: min(47rem, 92vw);
+  width: min(56rem, 94vw);
   max-height: 88svh;
+  margin: auto;
   overflow-y: auto;
   padding: 0;
   color: var(--ink);
   border: 1px solid rgba(213, 184, 118, 0.6);
-  border-radius: 8px;
-  background: rgba(12, 16, 15, 0.95);
+  border-radius: 10px;
+  background: #111813;
   box-shadow: 0 2rem 7rem rgba(0, 0, 0, 0.75);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
@@ -508,7 +543,37 @@
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  padding: 1.1rem 1.6rem;
+  min-height: 3.6rem;
+  padding: 0.55rem 1rem 0.55rem 1.4rem;
+  border-bottom: 1px solid rgba(213, 184, 118, 0.22);
+}
+
+.panelBrand {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  color: #e6ddcc;
+  font: 0.66rem/1.4 Arial, sans-serif;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.panelBrand span:first-child {
+  color: var(--gold);
+  font: 1rem Georgia, 'Times New Roman', serif;
+  letter-spacing: 0.2em;
+}
+
+.panelBrandDivider {
+  width: 1.5rem;
+  height: 1px;
+  background: rgba(213, 184, 118, 0.65);
+}
+
+.panelGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+  align-items: stretch;
 }
 
 .closeButton {
@@ -532,46 +597,57 @@
 .artwork {
   display: block;
   width: 100%;
-  height: min(34svh, 22rem);
+  height: clamp(27rem, 62svh, 46rem);
   object-fit: contain;
-  background: rgba(0, 0, 0, 0.3);
+  background: #090e0b;
 }
 
 .panelBody {
-  padding: clamp(1.25rem, 4vw, 2.5rem);
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: clamp(1.4rem, 3vw, 2.4rem);
 }
 
 .dialog h2 {
-  font: clamp(1.65rem, 4vw, 2.5rem) / 1.2 Georgia, 'Times New Roman', serif;
-  margin: 0 0 1.5rem;
+  font: clamp(1.65rem, 3.2vw, 2.5rem) / 1.08 Georgia, 'Times New Roman', serif;
+  margin: 0.35rem 0 1.2rem;
   text-wrap: balance;
 }
 
 .metadata {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1.1rem;
-  padding-bottom: 1.5rem;
+  width: 100%;
+  grid-template-columns: 1fr;
+  gap: 0.55rem;
+  padding-bottom: 1rem;
   border-bottom: 1px solid rgba(213, 184, 118, 0.25);
+}
+
+.metadata > div {
+  display: grid;
+  grid-template-columns: 5.4rem minmax(0, 1fr);
+  align-items: baseline;
+  gap: 0.6rem;
 }
 
 .metadata dt {
   color: var(--gold);
   text-transform: uppercase;
-  letter-spacing: 0.15em;
+  letter-spacing: 0.12em;
   font-size: 0.65rem;
-  margin-bottom: 0.3rem;
 }
 
 .metadata dd {
-  font-size: 0.85rem;
-  line-height: 1.6;
+  font-size: 0.82rem;
+  line-height: 1.45;
   margin: 0;
   overflow-wrap: anywhere;
 }
 
 .description {
-  font: 1.1rem / 1.9 Georgia, 'Times New Roman', serif;
+  font: 0.96rem / 1.7 Georgia, 'Times New Roman', serif;
   white-space: pre-line;
   overflow-wrap: anywhere;
 }
@@ -582,13 +658,15 @@
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 1rem;
-  margin-top: 2rem;
+  width: 100%;
+  margin-top: auto;
+  padding-top: 1.3rem;
 }
 
 .loveLetter {
   --gold: #e2b88c;
   border-color: rgba(226, 184, 140, 0.65);
-  background: linear-gradient(140deg, rgba(53, 32, 24, 0.95), rgba(22, 15, 16, 0.96));
+  background: #181511;
 }
 
 .loveLetter .description {
@@ -681,7 +759,50 @@
   }
 
   .welcome {
-    padding-top: 6rem;
+    padding-inline: 1.1rem;
+  }
+
+  .welcomePortrait {
+    inset: 0 0 auto;
+    width: 100%;
+    height: 60%;
+    object-position: center 30%;
+  }
+
+  .welcome::after {
+    background: linear-gradient(180deg, rgba(16, 24, 19, 0.04) 0%, rgba(16, 24, 19, 0.25) 30%, #101813 60%, #101813 100%);
+  }
+
+  .welcomeCard {
+    min-height: 100%;
+    padding: 6rem 0 2rem;
+    justify-content: flex-end;
+  }
+
+  .welcome h1 {
+    max-width: 100%;
+    font-size: clamp(2.25rem, 9vw, 3.2rem);
+  }
+
+  .invitation {
+    max-width: 35rem;
+    font-size: 1rem;
+  }
+
+  .panelGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .artwork {
+    height: min(38svh, 22rem);
+  }
+
+  .panelBody {
+    padding: 1.3rem 1.4rem 1.5rem;
+  }
+
+  .panelFooter {
+    margin-top: 1.2rem;
   }
 }
 

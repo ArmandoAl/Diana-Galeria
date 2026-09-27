@@ -99,24 +99,18 @@ export function CuratorOverlay({
   }, [isTouch])
 
   const handleCloseArtwork = useCallback(() => {
+    dialog.current?.close()
+    houseDialog.current?.close()
     close()
-    if (!isTouch) {
+    if (!isTouch && useGalleryStore.getState().isExploring) {
       const canvasEl = document.querySelector('canvas')
       try {
-        canvasEl?.requestPointerLock()
+        void canvasEl?.requestPointerLock().catch(() => {})
       } catch {
-        // Fallback natural: el usuario reanuda haciendo clic sobre el canvas
+        // Fallback: el clic sobre el canvas vuelve a capturar el cursor.
       }
     }
   }, [close, isTouch])
-
-  const handleExitToMenu = useCallback(() => {
-    close()
-    useGalleryStore.getState().setIsExploring(false)
-    if (document.pointerLockElement) {
-      document.exitPointerLock?.()
-    }
-  }, [close])
 
   const isTourActive = locked || isExploring
 
@@ -241,16 +235,23 @@ export function CuratorOverlay({
         hidden={isTourActive || inspecting || phase !== 'idle'}
         aria-labelledby="welcome-title"
       >
+        <img
+          className={styles.welcomePortrait}
+          src={`${import.meta.env.BASE_URL}author/author4.jpg`}
+          alt="Diana Carranza Lucatero"
+        />
         <div className={styles.welcomeCard}>
           <span className={styles.seal} aria-hidden="true">
             XIX
           </span>
           <p className={styles.eyebrow}>Una visita para recordar</p>
-          <h1 id="welcome-title">Gabinete del Siglo XIX — MUNAL</h1>
+          <h1 id="welcome-title">
+            <span className={styles.welcomeLead}>Bienvenida a la galería de</span>
+            Diana Carranza Lucatero
+          </h1>
           <p className={styles.invitation}>
-            El arte merece una pausa.
-            <br />
-            Entra, acércate y descubre lo que cada obra guarda para ti.
+            En sus obras, Diana explora la memoria, la herencia y el hogar como espacio emocional.
+            Acércate a cada pieza y descubre las historias que guarda.
           </p>
 
           {/* Indicador de carga con barra de progreso interactiva */}
@@ -382,24 +383,25 @@ export function CuratorOverlay({
         ref={dialog}
         className={`${styles.dialog} ${special ? styles.loveLetter : ''}`}
         aria-labelledby="artwork-title"
-        onCancel={handleCloseArtwork}
-        onClose={() => {
-          if (dialog.current?.open) return
+        onCancel={(event) => {
+          event.preventDefault()
           handleCloseArtwork()
         }}
       >
         {artwork && (
-          <article>
+          <article className={styles.artworkPanel}>
             <div className={styles.panelHeader}>
-              <p className={styles.eyebrow}>
-                {special ? 'Una carta, solo para ti' : 'Ficha de la colección'}
-              </p>
+              <div className={styles.panelBrand}>
+                <span>MUNAL</span>
+                <span className={styles.panelBrandDivider} aria-hidden="true" />
+                <span>Gabinete del Siglo XIX</span>
+              </div>
               <button
                 type="button"
                 className={styles.closeButton}
-                aria-label="Cerrar y volver al menú"
-                title="Volver al menú"
-                onClick={handleExitToMenu}
+                aria-label="Cerrar ficha y continuar el recorrido"
+                title="Cerrar ficha"
+                onClick={handleCloseArtwork}
               >
                 <svg
                   width="18"
@@ -417,49 +419,54 @@ export function CuratorOverlay({
                 </svg>
               </button>
             </div>
-            <img
-              className={styles.artwork}
-              src={import.meta.env.BASE_URL + artwork.imagePath.slice(1)}
-              alt={artwork.title}
-            />
-            <div className={styles.panelBody}>
-              {special && (
-                <p className={styles.dedication}>
-                  Entre todas las obras, esta es para ti.
+            <div className={styles.panelGrid}>
+              <img
+                className={styles.artwork}
+                src={import.meta.env.BASE_URL + artwork.imagePath.slice(1)}
+                alt={artwork.title}
+              />
+              <div className={styles.panelBody}>
+                <p className={styles.eyebrow}>
+                  {special ? 'Una carta, solo para ti' : 'Ficha de la colección'}
                 </p>
-              )}
-              <h2 id="artwork-title">{artwork.title}</h2>
-              <dl className={styles.metadata}>
-                <div>
-                  <dt>Autor</dt>
-                  <dd>{artwork.artist}</dd>
-                </div>
-                <div>
-                  <dt>Año</dt>
-                  <dd>{artwork.year}</dd>
-                </div>
-                <div>
-                  <dt>Técnica</dt>
-                  <dd>{artwork.technique}</dd>
-                </div>
-                <div>
-                  <dt>Dimensiones</dt>
-                  <dd>{artwork.dimensions}</dd>
-                </div>
-              </dl>
-              <p className={styles.description}>{artwork.description}</p>
-              <footer className={styles.panelFooter}>
-                <span className={styles.caption}>
-                  También puedes cerrar con <kbd>Esc</kbd>.
-                </span>
-                <button
-                  type="button"
-                  className={styles.goldButton}
-                  onClick={handleCloseArtwork}
-                >
-                  Continuar recorrido
-                </button>
-              </footer>
+                {special && (
+                  <p className={styles.dedication}>
+                    Entre todas las obras, esta es para ti.
+                  </p>
+                )}
+                <h2 id="artwork-title">{artwork.title}</h2>
+                <dl className={styles.metadata}>
+                  <div>
+                    <dt>Autora</dt>
+                    <dd>{artwork.artist}</dd>
+                  </div>
+                  <div>
+                    <dt>Año</dt>
+                    <dd>{artwork.year}</dd>
+                  </div>
+                  <div>
+                    <dt>Técnica</dt>
+                    <dd>{artwork.technique}</dd>
+                  </div>
+                  <div>
+                    <dt>Dimensiones</dt>
+                    <dd>{artwork.dimensions}</dd>
+                  </div>
+                </dl>
+                <p className={styles.description}>{artwork.description}</p>
+                <footer className={styles.panelFooter}>
+                  <span className={styles.caption}>
+                    También puedes cerrar con <kbd>Esc</kbd>.
+                  </span>
+                  <button
+                    type="button"
+                    className={styles.goldButton}
+                    onClick={handleCloseArtwork}
+                  >
+                    Continuar recorrido
+                  </button>
+                </footer>
+              </div>
             </div>
           </article>
         )}
@@ -469,9 +476,8 @@ export function CuratorOverlay({
         ref={houseDialog}
         className={styles.dialog}
         aria-labelledby="house-title"
-        onCancel={handleCloseArtwork}
-        onClose={() => {
-          if (houseDialog.current?.open) return
+        onCancel={(event) => {
+          event.preventDefault()
           handleCloseArtwork()
         }}
       >

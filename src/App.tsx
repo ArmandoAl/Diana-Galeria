@@ -36,7 +36,7 @@ export default function App() {
   const [travelDirection, setTravelDirection] = useState<-1 | 1>(1)
   const [arrivalDirection, setArrivalDirection] = useState<-1 | 1>(1)
   const [phase, setPhase] = useState<'idle' | 'out' | 'loading' | 'in'>('idle')
-  const rooms = useMemo(() => artworks ? createGalleryRooms(artworks, Boolean(artist?.galleryCards.length)) : [], [artworks, artist])
+  const rooms = useMemo(() => artworks ? createGalleryRooms(artworks, artist?.galleryCards) : [], [artworks, artist])
   const audioConfig = useMemo(() => ({ ...DEFAULT_AUDIO_CONFIG, muted }), [muted])
   const onReady = useCallback(() => {
     setReady(true)

@@ -1,4 +1,6 @@
 import type { Vector3 } from 'three'
+import type { Texture } from 'three'
+import type { ArtistGalleryCard } from './artist.ts'
 
 export type ArtworkSlotIndex = number
 
@@ -15,6 +17,10 @@ export interface ArtworkData {
   readonly isSpecial: boolean
   readonly collection?: 'Stone_Room'
 }
+
+export type GalleryMount =
+  | { readonly type: 'artwork'; readonly data: ArtworkData; readonly texture: Texture; readonly slotIndex: ArtworkSlotIndex }
+  | { readonly type: 'artist-card'; readonly data: ArtistGalleryCard; readonly texture: Texture; readonly slotIndex: ArtworkSlotIndex }
 
 /** Estado mutable del motor FPS; metros y metros/segundo, coordenadas Three.js. */
 export interface PlayerTransform {

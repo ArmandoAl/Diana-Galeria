@@ -7,14 +7,14 @@ import type { Mesh, Object3D } from 'three'
 import { KinematicPlayer } from '../../controllers/KinematicPlayer.ts'
 import { ArtworkFocus } from '../../controllers/ArtworkFocus.ts'
 import { useGalleryStore } from '../../stores/useGalleryStore.ts'
-import type { ArtworkData } from '../../types/gallery.ts'
+import type { GalleryMount } from '../../types/gallery.ts'
 import type { AudioEngineRef } from '../audio/AudioManager.tsx'
 
 export interface PlayerRigProps {
   /** Escena GLB ya montada, con transformaciones definitivas. */
   scene: Object3D
   collider?: Mesh
-  artworks: readonly ArtworkData[]
+  mounts: readonly GalleryMount[]
   audioEngineRef?: AudioEngineRef
   spawn?: readonly [number, number, number]
   /** Selector de un botón HTML explícito para entrar/reanudar el recorrido. */
@@ -29,7 +29,7 @@ export interface PlayerRigProps {
 const DEFAULT_SPAWN = [0, 0, 0] as const
 
 export function PlayerRig({
-  scene, collider, artworks, audioEngineRef, spawn = DEFAULT_SPAWN, lockSelector = '#enter-gallery',
+  scene, collider, mounts, audioEngineRef, spawn = DEFAULT_SPAWN, lockSelector = '#enter-gallery',
   onMotion, onLockChange, onDoor, facing = 0,
 }: PlayerRigProps) {
   const camera = useThree((state) => state.camera)
@@ -46,7 +46,7 @@ export function PlayerRig({
   useEffect(() => {
     const controller = new KinematicPlayer(scene, new Vector3(spawnX, spawnY, spawnZ), collider)
     let artworkFocus: ArtworkFocus
-    try { artworkFocus = new ArtworkFocus(scene, artworks) }
+    try { artworkFocus = new ArtworkFocus(scene, mounts) }
     catch (error) { controller.dispose(); throw error }
     const wasVisible = controller.collider.visible
     controller.collider.visible = false
@@ -70,7 +70,7 @@ export function PlayerRig({
       useGalleryStore.getState().setNearDoor(null)
       useGalleryStore.getState().setNearHouse(false)
     }
-  }, [scene, collider, artworks, camera, spawnX, spawnY, spawnZ, facing])
+  }, [scene, collider, mounts, camera, spawnX, spawnY, spawnZ, facing])
 
   useEffect(() => {
     const input = keys.current

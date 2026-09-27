@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import { readFile } from 'node:fs/promises'
-import { Box3, Mesh, MeshStandardMaterial, Texture, Vector3 } from 'three'
+import { Box3, BoxGeometry, Group, Mesh, MeshBasicMaterial, MeshStandardMaterial, Texture, Vector3 } from 'three'
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
 import { createGalleryRooms, ROOM_CAPACITY } from '../src/data/galleryRooms.ts'
 import { parseArtworks } from '../src/data/loadArtworks.ts'
@@ -26,14 +26,15 @@ for (const count of [1, 6, 8, 12, 13, 20, 40]) {
 }
 const rooms = createGalleryRooms(catalog)
 assert.equal(rooms[0].artworks.length, ROOM_CAPACITY)
-assert.equal(rooms[Math.floor(30 / ROOM_CAPACITY)].artworks[30 % ROOM_CAPACITY].isSpecial, true, 'La dedicatoria sigue al id, no al montaje.')
+assert.equal(rooms.flatMap((room) => room.artworks).find((artwork) => artwork.isSpecial)?.id, catalog[30].id, 'La dedicatoria sigue al id, no al montaje.')
 const bytes = await readFile(new URL('../public/models/munal_gallery_daylight.glb', import.meta.url))
 const loader = new GLTFLoader().register(() => ({ name: 'GeometryOnly', loadTexture: () => Promise.resolve(new Texture()) }))
 const { scene: source } = await loader.parseAsync(bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength), '')
 const original = source.getObjectByName('Artwork_01').geometry.attributes.position.array.slice()
 const image = new Texture({ width: 800, height: 1200 })
 for (const room of [rooms[0], rooms[1], rooms[2], rooms[0]]) {
-  const gallery = prepareGallery(source, new Texture(), room.artworks, room.artworks.map(() => image), room.palette)
+  const mounts = room.artworks.map((data) => ({ type: 'artwork', data, slotIndex: data.slotIndex, texture: image }))
+  const gallery = prepareGallery(source, new Texture(), mounts, room.palette)
   let visible = 0
   gallery.scene.traverse((object) => {
     if (!(object instanceof Mesh)) return
@@ -51,7 +52,7 @@ for (const room of [rooms[0], rooms[1], rooms[2], rooms[0]]) {
   })
   assert.equal(visible, room.artworks.length)
   assert.equal(gallery.scene.getObjectByName('Frame_14').visible, room.artworks.length === 14)
-  const focus = new ArtworkFocus(gallery.scene, room.artworks)
+  const focus = new ArtworkFocus(gallery.scene, mounts)
   assert.equal(focus.findDoor(new Vector3(0, 1.65, -6.4), new Vector3(0, 0, -1)), 1)
   assert.equal(focus.findDoor(new Vector3(0, 1.65, 6.4), new Vector3(0, 0, 1)), -1)
   assert.equal(focus.findDoor(new Vector3(0, 1.65, 0), new Vector3(0, 0, -1)), null)
@@ -72,6 +73,35 @@ for (const room of [rooms[0], rooms[1], rooms[2], rooms[0]]) {
   player.dispose()
   gallery.dispose()
 }
+const card = { imagePath: '/author/author2.jpg', eyebrow: 'Perfil', title: 'Diana Carranza Lucatero', text: 'Ficha de autora', placement: 'first' }
+const firstRoom = createGalleryRooms(catalog, [card])[0]
+assert.equal(firstRoom.artistCards[0], card)
+assert.equal(firstRoom.artworks.length, ROOM_CAPACITY - 1)
+const firstMounts = [
+  { type: 'artist-card', data: card, slotIndex: 0, texture: new Texture({ id: 'author2-photo-and-text' }) },
+  ...firstRoom.artworks.map((data, index) => ({ type: 'artwork', data: { ...data, slotIndex: index + 1 }, slotIndex: index + 1, texture: new Texture({ id: data.id }) })),
+]
+const firstGallery = prepareGallery(source, new Texture(), firstMounts, firstRoom.palette)
+for (const mount of firstMounts) {
+  const panel = firstGallery.scene.getObjectByName('Artwork_' + String(mount.slotIndex + 1).padStart(2, '0'))
+  assert.equal(panel.material.map.image, mount.texture.image, 'Cada slot conserva la textura de su elemento.')
+}
+const focusScene = new Group()
+for (const mount of firstMounts) {
+  const focusedPanel = new Mesh(new BoxGeometry(.8, .8, .04), new MeshBasicMaterial())
+  focusedPanel.name = 'Artwork_' + String(mount.slotIndex + 1).padStart(2, '0')
+  focusedPanel.userData.slotIndex = mount.slotIndex
+  focusedPanel.position.x = mount.slotIndex * 1.5
+  focusScene.add(focusedPanel)
+}
+focusScene.updateMatrixWorld(true)
+const firstFocus = new ArtworkFocus(focusScene, firstMounts)
+assert.equal(firstFocus.find(new Vector3(0, 0, 1), new Vector3(0, 0, -1)), null, 'La ficha editorial no abre una obra.')
+for (const mount of firstMounts.filter((entry) => entry.type === 'artwork')) {
+  const hit = firstFocus.find(new Vector3(mount.slotIndex * 1.5, 0, 1), new Vector3(0, 0, -1))
+  assert.equal(hit?.id, mount.data.id, 'El modal recibe los datos del panel contemplado.')
+}
+firstGallery.dispose()
 assert.deepEqual(source.getObjectByName('Artwork_01').geometry.attributes.position.array, original, 'La sala fuente no se muta entre visitas.')
 store.getState().setNearDoor(1)
 store.getState().setNearArtwork(catalog[0])
@@ -79,4 +109,4 @@ store.getState().setTransitioning(true)
 assert.equal(store.getState().nearbyDoor, null)
 assert.equal(store.getState().nearbyArtwork, null)
 store.getState().setTransitioning(false)
-console.log('OK: 1–40 obras, anillo 14/14/12, vuelta al inicio, tres paletas, proporciones/centros, puertas y recorrido físico completo.')
+console.log('OK: 1–40 obras, ficha author2 en slot 0, texturas/datos por slot, salas, geometría y recorrido físico.')

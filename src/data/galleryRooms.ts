@@ -14,14 +14,21 @@ export function createGalleryRooms(catalog: readonly ArtworkData[], artistCards:
   if (!catalog.length) throw new Error('No hay obras para crear salas.')
   const paintings = catalog.filter((artwork) => artwork.collection !== 'Stone_Room')
   const stoneWorks = catalog.filter((artwork) => artwork.collection === 'Stone_Room')
-  const rooms: { type: 'gallery' | 'collection'; name: string; palette: { name: string; wall: string; partition: string }; artworks: ArtworkData[]; artistCards: ArtistGalleryCard[] }[] = Array.from({ length: Math.ceil(paintings.length / ROOM_CAPACITY) }, (_, index) => ({
-    type: 'gallery' as const,
-    name: ROOM_PALETTES[index % ROOM_PALETTES.length].name,
-    palette: ROOM_PALETTES[index % ROOM_PALETTES.length],
-    artworks: paintings.slice(index * ROOM_CAPACITY, (index + 1) * ROOM_CAPACITY),
-    artistCards: [],
-  }))
   const featuredCard = artistCards.find((card) => card.placement === 'first')
+  const rooms: { type: 'gallery' | 'collection'; name: string; palette: { name: string; wall: string; partition: string }; artworks: ArtworkData[]; artistCards: ArtistGalleryCard[] }[] = []
+  let offset = 0
+  while (offset < paintings.length) {
+    const index = rooms.length
+    const capacity = index === 0 && featuredCard ? ROOM_CAPACITY - 1 : ROOM_CAPACITY
+    rooms.push({
+      type: 'gallery',
+      name: ROOM_PALETTES[index % ROOM_PALETTES.length].name,
+      palette: ROOM_PALETTES[index % ROOM_PALETTES.length],
+      artworks: paintings.slice(offset, offset + capacity),
+      artistCards: [],
+    })
+    offset += capacity
+  }
   if (featuredCard && rooms[0]) rooms[0].artistCards.push(featuredCard)
   for (const card of artistCards.filter((entry) => entry !== featuredCard)) {
     const room = rooms.filter((entry) => entry.type === 'gallery' && entry.artworks.length + entry.artistCards.length < MAX_ROOM_CAPACITY)

@@ -12,8 +12,8 @@ const { scene: source } = await new GLTFLoader().parseAsync(
 )
 const data = parseArtworks(JSON.parse(await readFile(new URL('../public/data/artworks.json', import.meta.url), 'utf8'))).slice(0, 8)
 const lightmap = new Texture()
-const images = data.map(() => new Texture())
-assert.throws(() => prepareGallery(source, lightmap, data, images), /TEXCOORD_1/)
+const mounts = data.map((artwork) => ({ type: 'artwork', data: artwork, slotIndex: artwork.slotIndex, texture: new Texture() }))
+assert.throws(() => prepareGallery(source, lightmap, mounts), /TEXCOORD_1/)
 // Fixture SOLO en memoria para probar asignaciones: no es un atlas válido ni un bake definitivo.
 source.traverse((object) => {
   if (object instanceof Mesh && object.name.startsWith('Architecture_')) {
@@ -21,7 +21,7 @@ source.traverse((object) => {
     object.geometry.setAttribute('uv1', object.geometry.getAttribute('uv').clone())
   }
 })
-const prepared = prepareGallery(source, lightmap, data, images)
+const prepared = prepareGallery(source, lightmap, mounts)
 assert.notEqual(prepared.scene, source)
 assert.equal(prepared.collider.visible, false)
 assert.ok(prepared.collider.geometry.boundsTree)

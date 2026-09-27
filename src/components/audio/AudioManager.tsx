@@ -4,13 +4,13 @@ import { Mesh } from 'three'
 import type { Object3D } from 'three'
 import { AudioEngine, DEFAULT_AUDIO_CONFIG } from '../../audio/AudioEngine.ts'
 import { useGalleryStore } from '../../stores/useGalleryStore.ts'
-import type { ArtworkData, AudioConfig } from '../../types/gallery.ts'
+import type { AudioConfig, GalleryMount } from '../../types/gallery.ts'
 
 export type AudioEngineRef = { current: AudioEngine | null }
 
 export interface AudioManagerProps {
   scene: Object3D
-  artworks: readonly ArtworkData[]
+  mounts: readonly GalleryMount[]
   lockSelector?: string
   config?: AudioConfig
   onError?: (error: Error) => void
@@ -21,7 +21,7 @@ const reportError = (error: Error) => console.error('[MUNAL Audio]', error)
 
 /** Montar una vez dentro del Canvas, junto a PlayerRig. No renderiza elementos visuales. */
 export function AudioManager({
-  scene, artworks, lockSelector = '#enter-gallery', config = DEFAULT_AUDIO_CONFIG,
+  scene, mounts, lockSelector = '#enter-gallery', config = DEFAULT_AUDIO_CONFIG,
   onError = reportError, engineRef,
 }: AudioManagerProps) {
   const camera = useThree((state) => state.camera)
@@ -53,7 +53,7 @@ export function AudioManager({
     const start = () => {
       try {
         if (!engine.current) {
-          const special = artworks.filter((artwork) => artwork.isSpecial)
+          const special = mounts.filter((mount) => mount.type === 'artwork' && mount.data.isSpecial)
           const slot = special[0]?.slotIndex
           const name = slot === undefined ? '' : `Artwork_${String(slot + 1).padStart(2, '0')}`
           let anchor: Mesh | undefined
@@ -97,7 +97,7 @@ export function AudioManager({
       engine.current = null
       if (engineRef) engineRef.current = null
     }
-  }, [camera, canvas, scene, artworks, lockSelector, engineRef])
+  }, [camera, canvas, scene, mounts, lockSelector, engineRef])
 
   useFrame(() => {
     engine.current?.update()

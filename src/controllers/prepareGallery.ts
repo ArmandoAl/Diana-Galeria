@@ -1,13 +1,13 @@
 import { DoubleSide, Group, LinearSRGBColorSpace, Mesh, MeshBasicMaterial, MeshPhysicalMaterial, MeshStandardMaterial, SRGBColorSpace, Vector3 } from 'three'
 import type { BufferGeometry, Material, Object3D, Texture } from 'three'
 import { computeBoundsTree, disposeBoundsTree } from 'three-mesh-bvh'
-import type { ArtworkData } from '../types/gallery.ts'
+import type { GalleryMount } from '../types/gallery.ts'
 import { MAX_ROOM_CAPACITY, ROOM_PALETTES } from '../data/galleryRooms.ts'
 import { computeAdaptiveArtworkLayout } from './wallLayout.ts'
 
 /** Copias propias: ni materiales ni texturas de la caché de useGLTF/useTexture se mutan. */
 export function prepareGallery(source: Object3D, sourceLightmap: Texture,
-  artworks: readonly ArtworkData[], images: readonly Texture[], palette: { wall: string; partition: string } = ROOM_PALETTES[0]) {
+  mounts: readonly GalleryMount[], palette: { wall: string; partition: string } = ROOM_PALETTES[0]) {
     const scene = new Group()
     scene.add(source.clone(true))
   const materials = new Set<Material>()
@@ -19,11 +19,11 @@ export function prepareGallery(source: Object3D, sourceLightmap: Texture,
     for (const geometry of geometries) { disposeBoundsTree.call(geometry); geometry.dispose() }
   }
   try {
-    if (artworks.length > MAX_ROOM_CAPACITY || images.length !== artworks.length) {
+    if (mounts.length > MAX_ROOM_CAPACITY) {
       throw new Error('Cada sala admite hasta 14 obras, con una imagen por obra.')
     }
-    if (new Set(artworks.map((artwork) => artwork.slotIndex)).size !== artworks.length
-      || artworks.some((artwork) => !Number.isInteger(artwork.slotIndex) || artwork.slotIndex < 0 || artwork.slotIndex >= MAX_ROOM_CAPACITY)) {
+    if (new Set(mounts.map((mount) => mount.slotIndex)).size !== mounts.length
+      || mounts.some((mount) => !Number.isInteger(mount.slotIndex) || mount.slotIndex < 0 || mount.slotIndex >= MAX_ROOM_CAPACITY)) {
       throw new Error('Los montajes de una sala deben ser únicos y estar entre 0 y 13.')
     }
     const lightmap = sourceLightmap.clone()
@@ -39,7 +39,7 @@ export function prepareGallery(source: Object3D, sourceLightmap: Texture,
       const match = /^Artwork_(\d{2})$/.exec(object.name)
       const frameMatch = /^Frame_(\d{2})$/.exec(object.name)
       const slot: unknown = object.userData.slotIndex ?? (match || frameMatch ? Number((match || frameMatch)![1]) - 1 : null)
-      const index = artworks.findIndex((artwork) => artwork.slotIndex === slot)
+      const index = mounts.findIndex((mount) => mount.slotIndex === slot)
       if ((match || frameMatch) && index < 0) { object.visible = false; return }
       if ((match || frameMatch) && index >= 0) {
         object.visible = true
@@ -48,7 +48,7 @@ export function prepareGallery(source: Object3D, sourceLightmap: Texture,
         sourceGeometry.computeBoundingBox()
         const center = sourceGeometry.boundingBox!.getCenter(new Vector3())
         const size = sourceGeometry.boundingBox!.getSize(new Vector3())
-        const image = images[index].image as { width?: number; height?: number } | undefined
+        const image = mounts[index].texture.image as { width?: number; height?: number } | undefined
         const width = Number(plane.userData.display_width ?? 1.8)
         const height = Number(plane.userData.display_height ?? 1.2)
         const aspect = image?.width && image?.height ? image.width / image.height : width / height
@@ -58,17 +58,18 @@ export function prepareGallery(source: Object3D, sourceLightmap: Texture,
         geometries.add(object.geometry)
       }
       if (index >= 0 && !frameMatch) {
-        if (slots.has(artworks[index].slotIndex)) throw new Error(`Placa duplicada: slot ${String(slot)}.`)
-        slots.add(artworks[index].slotIndex)
+        if (slots.has(mounts[index].slotIndex)) throw new Error(`Placa duplicada: slot ${String(slot)}.`)
+        slots.add(mounts[index].slotIndex)
         if (!object.geometry.getAttribute('uv')) throw new Error(`${object.name} necesita TEXCOORD_0.`)
-        const map = images[index].clone()
+        const mount = mounts[index]
+        const map = mount.texture.clone()
         textures.add(map)
         map.colorSpace = SRGBColorSpace
         map.flipY = false
         map.channel = 0
         map.needsUpdate = true
         // Exposición de sala uniforme para conservar legibles los colores de las obras.
-        object.material = new MeshBasicMaterial({ map, color: '#eee9e1', ...(artworks[index].id === 'obra-03-b' && { side: DoubleSide }) })
+        object.material = new MeshBasicMaterial({ map, color: '#eee9e1', ...(mount.type === 'artwork' && mount.data.id === 'obra-03-b' && { side: DoubleSide }) })
         materials.add(object.material)
         return
       }
@@ -106,7 +107,7 @@ export function prepareGallery(source: Object3D, sourceLightmap: Texture,
       })
       object.material = Array.isArray(object.material) ? next : next[0]
     })
-    if (slots.size !== artworks.length) throw new Error('El GLB no contiene todos los montajes de esta sala.')
+    if (slots.size !== mounts.length) throw new Error('El GLB no contiene todos los montajes de esta sala.')
     if (!floorFound) throw new Error('No se identifica el parquet: usa Mat_Parquet_Suelo o un nombre Floor/Parquet.')
     const collider = scene.getObjectByName('Collider_Room')
     if (!(collider instanceof Mesh)) throw new Error('Falta la malla Collider_Room en el GLB.')

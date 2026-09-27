@@ -8,7 +8,7 @@ import { prepareGallery } from '../../controllers/prepareGallery.ts'
 import { PlayerRig } from './PlayerRig.tsx'
 import { AudioManager } from '../audio/AudioManager.tsx'
 import type { AudioEngine } from '../../audio/AudioEngine.ts'
-import type { ArtworkData, AudioConfig } from '../../types/gallery.ts'
+import type { ArtworkData, AudioConfig, GalleryMount } from '../../types/gallery.ts'
 import type { GalleryRoom } from '../../data/galleryRooms.ts'
 import type { ArtistGalleryCard, ArtistProfile } from '../../types/artist.ts'
 
@@ -49,7 +49,7 @@ function makeArtistCardTexture(card: ArtistGalleryCard, photo: CanvasImageSource
   const titleLines = wrap(context, card.title, 940)
   titleLines.forEach((line, index) => context.fillText(line, 770, 220 + index * 60))
   let fontSize = 30
-  let bodyLines: string[] = []
+  let bodyLines: string[]
   const bodyTop = 270 + titleLines.length * 60
   do {
     context.font = `${fontSize}px Georgia, serif`
@@ -91,12 +91,11 @@ export function MunalGalleryScene({ artworks, artist, room, visit, direction, on
   // ponytail: catálogo pequeño precargado para conservar Pointer Lock; usar streaming si crece más allá de ~40 imágenes de tamaño web.
   const images = useTexture(artworks.map((artwork) => `${base}${artwork.imagePath.slice(1)}`))
   const artistImages = useTexture(artistCards.map((card) => `${base}${card.imagePath.slice(1)}`))
-  const [gallery, setGallery] = useState<(ReturnType<typeof prepareGallery> & { artworks: readonly ArtworkData[]; direction: -1 | 1 }) | null>(null)
+  const [gallery, setGallery] = useState<(ReturnType<typeof prepareGallery> & { mounts: readonly GalleryMount[]; direction: -1 | 1 }) | null>(null)
   const audioEngineRef = useRef<AudioEngine | null>(null)
   useEffect(() => {
     const storyTextures: Texture[] = []
-    const displayArtworks: ArtworkData[] = []
-    const displayImages: Texture[] = []
+    const mounts: GalleryMount[] = []
     const cardInterval = Math.ceil((room.artworks.length + 1) / (room.artistCards.length + 1))
     let paintingIndex = 0
     let cardIndex = 0
@@ -110,20 +109,17 @@ export function MunalGalleryScene({ artworks, artist, room, visit, direction, on
         const imageIndex = artistCards.findIndex((entry) => entry.imagePath === card.imagePath)
         const photo = artistImages[imageIndex]?.image as CanvasImageSource & { width: number; height: number } | undefined
         if (photo) {
-          displayArtworks.push({ id: `artist-card-${imageIndex}`, slotIndex: 0, title: card.title, artist: 'Diana Carranza Lucatero', year: '', technique: 'Ficha biográfica y fotografía', dimensions: '', description: card.text, imagePath: card.imagePath, isSpecial: false })
           const texture = makeArtistCardTexture(card, photo)
           storyTextures.push(texture)
-          displayImages.push(texture)
+          mounts.push({ type: 'artist-card', data: card, texture, slotIndex: mounts.length })
         }
         cardIndex += 1
       } else {
         const artwork = room.artworks[paintingIndex++]
-        displayArtworks.push(artwork)
-        displayImages.push(images[artworks.findIndex((entry) => entry.id === artwork.id)])
+        mounts.push({ type: 'artwork', data: { ...artwork, slotIndex: mounts.length }, texture: images[artworks.findIndex((entry) => entry.id === artwork.id)], slotIndex: mounts.length })
       }
     }
-    const slottedArtworks = displayArtworks.map((artwork, slotIndex) => ({ ...artwork, slotIndex }))
-    const prepared = prepareGallery(source, lightmap, slottedArtworks, displayImages, room.palette)
+    const prepared = prepareGallery(source, lightmap, mounts, room.palette)
     const disposePrepared = prepared.dispose
     prepared.dispose = () => { storyTextures.forEach((texture) => texture.dispose()); disposePrepared() }
     if (room.type !== 'collection') {
@@ -137,7 +133,7 @@ export function MunalGalleryScene({ artworks, artist, room, visit, direction, on
     }
     // Recursos GPU con ciclo de vida de efecto, incluidas las remontadas de StrictMode.
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    setGallery({ ...prepared, artworks: room.artworks, direction })
+    setGallery({ ...prepared, mounts, direction })
     return () => {
       prepared.dispose()
     }
@@ -147,9 +143,9 @@ export function MunalGalleryScene({ artworks, artist, room, visit, direction, on
   if (!gallery) return null
   return <>
     <primitive object={gallery.scene} dispose={null} />
-    <PlayerRig scene={gallery.scene} collider={gallery.collider} artworks={gallery.artworks} audioEngineRef={audioEngineRef} onLockChange={onLockChange}
+    <PlayerRig scene={gallery.scene} collider={gallery.collider} mounts={gallery.mounts} audioEngineRef={audioEngineRef} onLockChange={onLockChange}
       onDoor={onDoor} spawn={[0, 0, gallery.direction === 1 ? 6.2 : -6.2]} facing={gallery.direction === 1 ? 0 : Math.PI} />
-    <AudioManager scene={gallery.scene} artworks={gallery.artworks} engineRef={audioEngineRef} config={audioConfig} onError={onAudioError} />
+    <AudioManager scene={gallery.scene} mounts={gallery.mounts} engineRef={audioEngineRef} config={audioConfig} onError={onAudioError} />
     {/* Captura estática de reflejos: sin luces dinámicas que dupliquen el bake ni shadow maps. */}
     <Environment frames={1} resolution={256} environmentIntensity={0.8}>
       <Lightformer position={[-4, 2.6, 0]} rotation={[0, Math.PI / 2, 0]}

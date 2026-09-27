@@ -3,6 +3,7 @@ import { readFile } from 'node:fs/promises'
 import { Box3, Texture, Vector3 } from 'three'
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
 import { prepareGallery } from '../src/controllers/prepareGallery.ts'
+import { createGalleryRooms } from '../src/data/galleryRooms.ts'
 import { KinematicPlayer } from '../src/controllers/KinematicPlayer.ts'
 import { parseArtworks } from '../src/data/loadArtworks.ts'
 
@@ -20,7 +21,7 @@ assert.ok(report.png_roundtrip_max_error < 0.001)
 
 const bytes = await readFile(new URL('public/models/munal_gallery_daylight.glb', root))
 const document = JSON.parse(bytes.subarray(20, 20 + bytes.readUInt32LE(12)).toString())
-assert.equal(document.meshes.length, 42)
+assert.equal(document.meshes.length, 44)
 assert.equal(document.images.length, 10, 'Parquet, jardín y ocho cuadros embebidos.')
 assert.ok(document.images.every((image) => Number.isInteger(image.bufferView)))
 // Node no decodifica imágenes del navegador. Solo se omite esa etapa para validar
@@ -52,7 +53,8 @@ assert.equal(glass?.extensions?.KHR_materials_transmission?.transmissionFactor, 
 assert.ok(!glass.emissiveFactor?.some((value) => value > 0), 'El cristal no emite luz.')
 assert.equal(report.modules, 3)
 const artworks = parseArtworks(JSON.parse(await readFile(new URL('public/data/artworks.json', root), 'utf8')))
-const prepared = prepareGallery(scene, new Texture(), artworks, artworks.map(() => new Texture()))
+const mounts = createGalleryRooms(artworks)[0].artworks.map((data) => ({ type: 'artwork', data, slotIndex: data.slotIndex, texture: new Texture() }))
+const prepared = prepareGallery(scene, new Texture(), mounts)
 const player = new KinematicPlayer(prepared.scene, new Vector3(), prepared.collider)
 const direction = new Vector3(1, 0, 0)
 for (let frame = 0; frame < 600; frame++) player.update(1 / 60, direction, true)

@@ -1,6 +1,6 @@
 import { Matrix3, Mesh, Raycaster, Vector3 } from 'three'
 import type { Intersection, Object3D } from 'three'
-import type { ArtworkData } from '../types/gallery.ts'
+import type { ArtworkData, GalleryMount } from '../types/gallery.ts'
 
 /** Rayo central contra la escena visual: paredes y marcos también ocluyen los cuadros. */
 export class ArtworkFocus {
@@ -12,7 +12,8 @@ export class ArtworkFocus {
   private readonly normal = new Vector3()
   private readonly normalMatrix = new Matrix3()
 
-  constructor(scene: Object3D, data: readonly ArtworkData[]) {
+  constructor(scene: Object3D, mounts: readonly GalleryMount[]) {
+    const data = mounts.filter((mount) => mount.type === 'artwork').map((mount) => mount.data)
     const assigned = new Set<number>()
     scene.traverse((object) => {
       if (!(object instanceof Mesh) || object.name === 'Collider_Room'

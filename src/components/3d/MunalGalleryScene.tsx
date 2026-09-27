@@ -122,11 +122,11 @@ export function MunalGalleryScene({ artworks, artist, room, visit, direction, on
     const prepared = prepareGallery(source, lightmap, mounts, room.palette)
     const disposePrepared = prepared.dispose
     prepared.dispose = () => { storyTextures.forEach((texture) => texture.dispose()); disposePrepared() }
-    if (room.type !== 'collection') {
+    if (room.index === 1) {
       const house = houseSource.clone(true)
       house.name = 'Casita_Madriguera_Interactiva'
       house.userData.interactive_house = true
-      house.position.set(3.25, 0, 6.75)
+      house.position.set(2, 0, 6)
       house.scale.setScalar(2)
       house.rotation.y = -Math.PI / 2
       prepared.scene.add(house)

@@ -73,9 +73,10 @@ def main():
     links.new(texture.outputs['Color'], emission.inputs['Color'])
     links.new(emission.outputs[0], nodes.get('Material Output').inputs['Surface'])
     architecture, panes, backdrops, doors = [room], [], [], []
-    # Cubre el encuentro inferior donde las dos mamparas tocan los muros laterales.
-    corner_caps = [box('Zocalo_Remate_Esquina_1', (-3.85,-3.4,.12), (.32,.32,.24), collection, wood),
-                   box('Zocalo_Remate_Esquina_2', (3.85,3.4,.12), (.32,.32,.24), collection, wood)]
+    # Las mamparas terminan en x=±4.0 y los muros laterales están en x=±4.3;
+    # centrar los remates en ese hueco evita superponerlos al zócalo existente.
+    corner_caps = [box('Zocalo_Remate_Esquina_1', (-4.15,-3.4,.12), (.32,.32,.24), collection, wood),
+                   box('Zocalo_Remate_Esquina_2', (4.15,3.4,.12), (.32,.32,.24), collection, wood)]
     for cap in corner_caps:
         exhibition.planar_uv(cap)
 

@@ -3,6 +3,7 @@ export interface ArtistGalleryCard {
   readonly eyebrow: string
   readonly title: string
   readonly text: string
+  readonly placement?: 'first'
 }
 
 export interface ArtistProfile {

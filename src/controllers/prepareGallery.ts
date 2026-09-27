@@ -76,7 +76,7 @@ export function prepareGallery(source: Object3D, sourceLightmap: Texture,
         map.channel = 0
         map.needsUpdate = true
         // Exposición de sala uniforme para conservar legibles los colores de las obras.
-        object.material = new MeshBasicMaterial({ map, color: '#eee9e1' })
+        object.material = new MeshBasicMaterial({ map, color: '#eee9e1', ...(artworks[index].id === 'obra-03-b' && { side: DoubleSide }) })
         materials.add(object.material)
         return
       }

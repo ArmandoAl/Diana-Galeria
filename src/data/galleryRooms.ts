@@ -21,7 +21,9 @@ export function createGalleryRooms(catalog: readonly ArtworkData[], artistCards:
     artworks: paintings.slice(index * ROOM_CAPACITY, (index + 1) * ROOM_CAPACITY),
     artistCards: [],
   }))
-  for (const card of artistCards) {
+  const featuredCard = artistCards.find((card) => card.placement === 'first')
+  if (featuredCard && rooms[0]) rooms[0].artistCards.push(featuredCard)
+  for (const card of artistCards.filter((entry) => entry !== featuredCard)) {
     const room = rooms.filter((entry) => entry.type === 'gallery' && entry.artworks.length + entry.artistCards.length < MAX_ROOM_CAPACITY)
       .sort((a, b) => a.artworks.length + a.artistCards.length - (b.artworks.length + b.artistCards.length))[0]
     if (room) room.artistCards.push(card)

@@ -101,7 +101,11 @@ export function MunalGalleryScene({ artworks, artist, room, visit, direction, on
     let paintingIndex = 0
     let cardIndex = 0
     while (paintingIndex < room.artworks.length || cardIndex < room.artistCards.length) {
-      if (cardIndex < room.artistCards.length && (paintingIndex === room.artworks.length || (paintingIndex > 0 && paintingIndex % cardInterval === 0))) {
+      const nextCard = room.artistCards[cardIndex]
+      const showCard = nextCard?.placement === 'first'
+        ? paintingIndex === 0
+        : cardIndex < room.artistCards.length && (paintingIndex === room.artworks.length || (paintingIndex > 0 && paintingIndex % cardInterval === 0))
+      if (showCard) {
         const card = room.artistCards[cardIndex]
         const imageIndex = artistCards.findIndex((entry) => entry.imagePath === card.imagePath)
         const photo = artistImages[imageIndex]?.image as CanvasImageSource & { width: number; height: number } | undefined

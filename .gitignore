@@ -32,3 +32,6 @@ __pycache__/
 .vercel
 public/author/*.pdf
 public/artworks/Stone_Room/*.png
+
+# Local PDF rendering previews
+/tmp/
